@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - MatrubhashaAI</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="@Url.Content("~/favicon.ico")" type="image/x-icon" />
+
+    <!-- Font Awesome with fallback -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="~/css/site.css" rel="stylesheet" />
+    <!-- Render section styles before other styles -->
+    @RenderSection("Styles", required: false)
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Prevent layout shift when scrollbar appears */
+        :root {
+            scrollbar-gutter: stable;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Simple Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="/" class="flex items-center space-x-2">
+                <i class="fas fa-language text-indigo-600 text-2xl"></i>
+                <span class="text-xl font-bold text-indigo-700">MatrubhashaAI</span>
+            </a>
+            <nav class="hidden md:flex space-x-6">
+                <a asp-controller="Home" asp-action="Index" class="text-gray-700 hover:text-indigo-600 font-medium">Home</a>
+                <a asp-controller="Home" asp-action="Features" class="text-gray-700 hover:text-indigo-600 font-medium">Features</a>
+                <a asp-controller="Home" asp-action="About" class="text-gray-700 hover:text-indigo-600 font-medium">About</a>
+            </nav>
+            <button class="md:hidden text-gray-600" aria-controls="mobile-menu" aria-expanded="false">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile menu (hidden by default) -->
+    <div id="mobile-menu" class="md:hidden hidden bg-white shadow-md">
+        <div class="container mx-auto px-4 py-3 space-y-3">
+            <a asp-controller="Home" asp-action="Index" class="block py-2 text-gray-700 hover:text-indigo-600">Home</a>
+            <a asp-controller="Home" asp-action="Features" class="block py-2 text-gray-700 hover:text-indigo-600">Features</a>
+            <a asp-controller="Home" asp-action="About" class="block py-2 text-gray-700 hover:text-indigo-600">About</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-50 border-t mt-12">
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">MatrubhashaAI</h3>
+                    <p class="text-gray-600">From Global Posts to Local Voices.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a asp-controller="Home" asp-action="Index" class="text-gray-600 hover:text-indigo-600">Home</a></li>
+                        <li><a asp-controller="Home" asp-action="Features" class="text-gray-600 hover:text-indigo-600">Features</a></li>
+                        <li><a asp-controller="Home" asp-action="About" class="text-gray-600 hover:text-indigo-600">About</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Connect</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-600 hover:text-indigo-600">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-600 hover:text-indigo-600">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-600 hover:text-indigo-600">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 mt-8 pt-8 text-center text-gray-500 text-sm">
+                <p>© @DateTime.Now.Year MatrubhashaAI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
+
+    @RenderSection("Scripts", required: false)
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Mobile menu toggle
+        $(document).ready(function() {
+            $('button[aria-controls="mobile-menu"]').click(function() {
+                const isExpanded = $(this).attr('aria-expanded') === 'true';
+                $(this).attr('aria-expanded', !isExpanded);
+                $('#mobile-menu').toggleClass('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

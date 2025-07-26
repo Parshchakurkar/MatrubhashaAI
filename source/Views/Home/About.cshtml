@@ -1,0 +1,95 @@
+﻿@{
+    ViewBag.Title = "About - Matrubhasha AI";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="bg-gray-50 min-h-screen">
+    <!-- Hero Section -->
+    <section class="bg-indigo-700 text-white py-12">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">
+                <i class="fas fa-language mr-2"></i> About MatrubhashaAI
+            </h1>
+            <p class="text-lg md:text-xl text-indigo-100 max-w-3xl mx-auto">
+                Empowering Indian languages through AI-driven translation technology
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Mission Section -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+            <div class="md:flex">
+                <div class="md:w-1/2 p-6 md:p-8">
+                    <span class="inline-block bg-indigo-100 text-indigo-800 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                        OUR MISSION
+                    </span>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                        Bridging language barriers across India
+                    </h2>
+                    <p class="text-gray-600 mb-4">
+                        Founded in Pune, MatrubhashaAI specializes in context-aware translations for
+                        <span class="font-medium">Marathi, Hindi, Tamil, Telugu</span> and 8 other Indian languages.
+                    </p>
+                    <div class="bg-indigo-50 p-4 rounded-lg border-l-4 border-indigo-500">
+                        <p class="text-indigo-800 italic">
+                            "We don't just translate words - we preserve cultural meaning."
+                        </p>
+                    </div>
+                </div>
+                <div class="md:w-1/2 bg-indigo-50 flex items-center justify-center p-6">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+                         alt="Team working on language technology"
+                         class="rounded-lg shadow-sm h-full w-full object-cover">
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Feature 1 -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                <div class="text-indigo-600 mb-3">
+                    <i class="fas fa-brain text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Advanced AI Models</h3>
+                <p class="text-gray-600">
+                    Custom transformer architectures optimized for Indian language structures
+                </p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                <div class="text-green-600 mb-3">
+                    <i class="fas fa-database text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Rich Datasets</h3>
+                <p class="text-gray-600">
+                    3M+ curated translation pairs with regional context annotations
+                </p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                <div class="text-amber-600 mb-3">
+                    <i class="fas fa-shield-alt text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Data Sovereignty</h3>
+                <p class="text-gray-600">
+                    All processing happens on servers located within India
+                </p>
+            </div>
+        </div>
+
+       
+        <!-- CTA Section -->
+        <div class="text-center bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl p-8 shadow-lg">
+            <h2 class="text-xl md:text-2xl font-bold mb-4">Ready to experience authentic translations?</h2>
+            <a asp-controller="Home" asp-action="Index"
+               class="inline-block bg-white text-indigo-700 px-6 py-3 rounded-full font-medium hover:bg-gray-100 transition">
+                <i class="fas fa-play mr-2"></i> Try Now
+            </a>
+        </div>
+    </div>
+</div>

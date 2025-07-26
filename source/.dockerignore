@@ -1,0 +1,7 @@
+.vs
+.bin
+.obj
+.gitignore
+.git
+*.md
+.cache

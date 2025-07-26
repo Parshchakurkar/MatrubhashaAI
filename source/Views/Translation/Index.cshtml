@@ -1,0 +1,224 @@
+﻿@{
+    ViewBag.Title = "MatrubhashaAI - Multilingual Content Converter";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-indigo-700 mb-2">
+                <i class="fas fa-language mr-2"></i> MatrubhashaAI
+            </h1>
+            <p class="text-gray-600">Convert your blog content into multiple languages with one click</p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="p-6 border-b">
+                <!-- Blog URL and Direct Input -->
+                <div class="flex flex-col md:flex-row gap-4 mb-4">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Enter Blog URL</label>
+                        <div class="flex">
+                            <input type="url" id="blogUrl" placeholder="https://example.com/blog/post" class="flex-1 rounded-l-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2 border">
+                            <button onclick="fetchBlogContent()" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700 transition">
+                                <i class="fas fa-download mr-1"></i> Fetch
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Or paste content directly</label>
+                        <textarea id="blogContent" rows="5" placeholder="Paste your blog content here..." class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 border"></textarea>
+                        <div class="text-sm text-gray-500 mt-1" id="wordCount">0 words</div>
+                    </div>
+                </div>
+
+                <!-- Language Selection -->
+                <div class="flex gap-4 mb-4">
+                    <div class="w-1/2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Source Language</label>
+                        <select id="sourceLanguage" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                            <option value="auto">Auto Detect</option>
+                            <option value="en">English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="mr">Marathi</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                        </select>
+                    </div>
+                    <div class="w-1/2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Target Languages</label>
+                        <div class="relative">
+                            <div id="selectedLanguages" class="flex flex-wrap gap-2 p-2 border border-gray-300 rounded-md min-h-[42px]">
+                                <span data-lang="mr" class="inline-flex items-center bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full text-xs">
+                                    <img src="https://flagcdn.com/w20/in.png" class="language-flag mr-1"> Marathi
+                                    <button onclick="removeLanguage('mr')" class="ml-1 text-indigo-500 hover:text-indigo-700">
+                                        <i class="fas fa-times text-xs"></i>
+                                    </button>
+                                </span>
+                            </div>
+                            <button onclick="toggleLanguageDropdown()" class="absolute right-2 top-2 text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div id="languageDropdown" class="hidden mt-1 p-2 border border-gray-300 rounded-md bg-white shadow-lg z-10 max-h-60 overflow-y-auto">
+                                <div class="grid grid-cols-1 gap-2">
+                                    <div class="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onclick="toggleLanguage('mr', 'Marathi', 'in')">
+                                        <img src="https://flagcdn.com/w20/in.png" class="language-flag mr-2"> Marathi
+                                    </div>
+                                    <div class="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onclick="toggleLanguage('hi', 'Hindi', 'in')">
+                                        <img src="https://flagcdn.com/w20/in.png" class="language-flag mr-2"> Hindi
+                                    </div>
+                                    <div class="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onclick="toggleLanguage('en', 'English', 'us')">
+                                        <img src="https://flagcdn.com/w20/us.png" class="language-flag mr-2"> English
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Translate Button -->
+                <div class="text-center mt-4">
+                    <button onclick="translateContent()" class="bg-indigo-600 text-white px-6 py-3 rounded-full shadow hover:bg-indigo-700 transition">
+                        <i class="fas fa-language mr-2"></i> Translate Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div id="loadingState" class="hidden p-6 text-center">
+                <div class="inline-block animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-600 mb-2"></div>
+                <p class="text-gray-600">Translating your content...</p>
+            </div>
+
+            <!-- Results -->
+            <div id="resultsSection" class="hidden p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Translations</h3>
+                <div id="translationsContainer" class="space-y-4"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-sm text-gray-500">
+            <p>© @DateTime.Now.Year MatrubhashaAI. All rights reserved.</p>
+        </footer>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        document.getElementById('blogContent').addEventListener('input', function () {
+            const wordCount = this.value.trim().split(/\s+/).filter(w => w).length;
+            document.getElementById('wordCount').textContent = `${wordCount} words`;
+        });
+
+        async function fetchBlogContent() {
+            const blogUrl = document.getElementById("blogUrl").value.trim();
+            if (!blogUrl) return alert("Please enter a valid blog URL.");
+
+            try {
+                const response = await fetch("/Translation/ExtractFromUrl", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ url: blogUrl })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById("blogContent").value = result.content;
+                    document.getElementById("wordCount").textContent = `${result.content.trim().split(/\s+/).length} words`;
+                } else {
+                    alert("Failed to extract content: " + result.error);
+                }
+            } catch (err) {
+                alert("Error: " + err.message);
+            }
+        }
+
+        function toggleLanguageDropdown() {
+            document.getElementById('languageDropdown').classList.toggle('hidden');
+        }
+
+        function toggleLanguage(code, name, flag) {
+            const container = document.getElementById('selectedLanguages');
+            if (container.querySelector(`[data-lang="${code}"]`)) return removeLanguage(code);
+
+            const span = document.createElement('span');
+            span.className = 'inline-flex items-center bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full text-xs';
+            span.setAttribute('data-lang', code);
+            span.innerHTML = `
+                        <img src="https://flagcdn.com/w20/${flag}.png" class="language-flag mr-1"> ${name}
+                        <button onclick="removeLanguage('${code}')" class="ml-1 text-indigo-500 hover:text-indigo-700">
+                            <i class="fas fa-times text-xs"></i>
+                        </button>`;
+            container.appendChild(span);
+        }
+
+        function removeLanguage(code) {
+            const tag = document.querySelector(`#selectedLanguages span[data-lang="${code}"]`);
+            if (tag) tag.remove();
+        }
+
+        async function translateContent() {
+            const content = document.getElementById('blogContent').value.trim();
+            const langTags = document.querySelectorAll('#selectedLanguages span');
+            const selectedLangs = Array.from(langTags).map(tag =>
+                tag.querySelector('button').getAttribute('onclick').match(/'([^']+)'/)[1]
+            );
+            if (!content) return alert("Please enter content to translate.");
+            if (selectedLangs.length === 0) return alert("Please select at least one target language.");
+
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('translationsContainer').innerHTML = '';
+
+            for (const lang of selectedLangs) {
+                try {
+                    const res = await fetch('/Translation/TranslateWithGoogle', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content, targetLanguage: lang })
+                    });
+                    const result = await res.json();
+                    if (res.ok && result.success) {
+                        addTranslationCard(lang, result.translation);
+                    } else {
+                        addTranslationCard(lang, `\u274C ${result.error || 'Translation failed'}`);
+                    }
+                } catch (err) {
+                    addTranslationCard(lang, `\u274C Error: ${err.message}`);
+                }
+            }
+
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+        }
+
+        function addTranslationCard(langCode, text) {
+            const langNameMap = { mr: 'Marathi', hi: 'Hindi', en: 'English', es: 'Spanish', fr: 'French', de: 'German' };
+            const container = document.getElementById('translationsContainer');
+
+            const div = document.createElement('div');
+            div.className = 'bg-gray-100 p-4 rounded shadow';
+            div.innerHTML = `
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="text-md font-semibold">${langNameMap[langCode] || langCode}</h4>
+                            <button onclick="copyTranslation('${langCode}')" class="text-sm text-indigo-600 hover:underline">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div id="translation-${langCode}" class="whitespace-pre-wrap text-sm text-gray-800">${text}</div>
+                    `;
+            container.appendChild(div);
+        }
+
+        function copyTranslation(langCode) {
+            const text = document.getElementById(`translation-${langCode}`).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert(`Copied ${langCode.toUpperCase()} translation`);
+            });
+        }
+    </script>
+}

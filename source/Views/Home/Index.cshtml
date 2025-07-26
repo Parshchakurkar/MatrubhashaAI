@@ -1,0 +1,484 @@
+﻿@{
+    ViewBag.Title = "MatrubhashaAI - Multilingual Content Converter";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-indigo-700 mb-2">
+                <i class="fas fa-language mr-2"></i> MatrubhashaAI
+            </h1>
+            <p class="text-gray-600">Convert your blog content into multiple languages with one click</p>
+           @*  <div class="mt-4 flex justify-center">
+                <div class="inline-flex bg-white shadow rounded-full px-4 py-1 text-sm text-gray-700">
+                    <span class="font-medium">Special focus on</span>
+                    <span class="ml-2 px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">Marathi</span>
+                </div>
+            </div> *@
+        </header>
+
+        <!-- Main Content -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <!-- Input Section -->
+            <div class="p-6 border-b">
+                <div class="flex flex-col md:flex-row gap-4 mb-4">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Enter Blog URL</label>
+                        <div class="flex">
+                            <input type="url" id="blogUrl" placeholder="https://example.com/blog/post"
+                                   class="flex-1 rounded-l-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2 border">
+                            <button onclick="fetchBlogContent()" class="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700 transition">
+                                <i class="fas fa-download mr-1"></i> Fetch
+                            </button>
+                        </div>
+                    </div>
+                    <div class="text-center text-gray-400 my-auto hidden md:block">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Or paste content directly</label>
+                        <div class="textarea-container">
+                            <textarea id="blogContent" rows="5" placeholder="Paste your blog content here..."
+                                      class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 border"></textarea>
+                            <div class="word-count" id="wordCount">0 words</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 mb-4">
+                    <div class="flex-1 min-w-[200px]">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Source Language</label>
+                        <select id="sourceLanguage" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                            <option value="auto">Auto Detect</option>
+                            <option value="en">English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="mr">Marathi</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                        </select>
+                    </div>
+                    <div class="flex-1 min-w-[200px]">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Target Languages</label>
+                        <div class="relative">
+                            <div id="selectedLanguages" class="flex flex-wrap gap-1 p-2 border border-gray-300 rounded-md min-h-[42px]">
+                                <span class="inline-flex items-center bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full text-xs">
+                                    <img src="https://flagcdn.com/w20/in.png" class="language-flag" alt="Marathi"> Marathi
+                                    <button onclick="removeLanguage('mr')" class="ml-1 text-indigo-500 hover:text-indigo-700">
+                                        <i class="fas fa-times text-xs"></i>
+                                    </button>
+                                </span>
+                            </div>
+                            <button onclick="toggleLanguageDropdown()" class="absolute right-2 top-2 text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        <div id="languageDropdown" class="hidden mt-1 p-2 border border-gray-300 rounded-md bg-white shadow-lg z-10 max-h-60 overflow-y-auto">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                <div class="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onclick="toggleLanguage('mr', 'Marathi', 'in')">
+                                    <img src="https://flagcdn.com/w20/in.png" class="language-flag" alt="Marathi">
+                                    <span>Marathi</span>
+                                    <span class="ml-auto text-green-500"><i class="fas fa-check"></i></span>
+                                </div>
+                                <div class="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onclick="toggleLanguage('hi', 'Hindi', 'in')">
+                                    <img src="https://flagcdn.com/w20/in.png" class="language-flag" alt="Hindi">
+                                    <span>Hindi</span>
+                                </div>
+                                <div class="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onclick="toggleLanguage('en', 'English', 'us')">
+                                    <img src="https://flagcdn.com/w20/us.png" class="language-flag" alt="English">
+                                    <span>English</span>
+                                </div>
+                                @* <div class="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onclick="toggleLanguage('es', 'Spanish', 'es')">
+                                    <img src="https://flagcdn.com/w20/es.png" class="language-flag" alt="Spanish">
+                                    <span>Spanish</span>
+                                </div>
+                                <div class="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onclick="toggleLanguage('fr', 'French', 'fr')">
+                                    <img src="https://flagcdn.com/w20/fr.png" class="language-flag" alt="French">
+                                    <span>French</span>
+                                </div>
+                                <div class="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onclick="toggleLanguage('de', 'German', 'de')">
+                                    <img src="https://flagcdn.com/w20/de.png" class="language-flag" alt="German">
+                                    <span>German</span>
+                                </div>
+                                <div class="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onclick="toggleLanguage('ja', 'Japanese', 'jp')">
+                                    <img src="https://flagcdn.com/w20/jp.png" class="language-flag" alt="Japanese">
+                                    <span>Japanese</span>
+                                </div>
+                                <div class="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onclick="toggleLanguage('zh', 'Chinese', 'cn')">
+                                    <img src="https://flagcdn.com/w20/cn.png" class="language-flag" alt="Chinese">
+                                    <span>Chinese</span>
+                                </div> *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-center mt-4">
+                    <button onclick="translateContent()" id="translateBtn" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full shadow-md hover:from-indigo-700 hover:to-purple-700 transition flex items-center">
+                        <i class="fas fa-language mr-2"></i> Translate Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="hidden p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Translation Results</h3>
+                    <div class="flex space-x-2">
+                        <button onclick="copyAllTranslations()" class="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded flex items-center">
+                            <i class="fas fa-copy mr-1"></i> Copy All
+                        </button>
+                        <button onclick="downloadTranslations()" class="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded flex items-center">
+                            <i class="fas fa-download mr-1"></i> Download
+                        </button>
+                    </div>
+                </div>
+
+                <div id="translationsContainer" class="space-y-6">
+                    <!-- Translations will appear here -->
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="hidden p-8 text-center">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600 mb-4"></div>
+                <p class="text-gray-600">Translating your content...</p>
+                <p class="text-sm text-gray-500 mt-1">This may take a moment depending on content length</p>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                <div class="text-indigo-600 mb-3">
+                    <i class="fas fa-bolt text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-lg mb-2">Fast Translations</h3>
+                <p class="text-gray-600">Get your content translated in seconds with our optimized translation engine.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 marathi-highlight">
+                <div class="text-amber-600 mb-3">
+                    <i class="fas fa-star text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-lg mb-2">Language Excellence</h3>
+                <p class="text-gray-600">Specialized algorithms for accurate Language translations that preserve cultural context.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                <div class="text-green-600 mb-3">
+                    <i class="fas fa-lock text-2xl"></i>
+                </div>
+                <h3 class="font-semibold text-lg mb-2">Privacy Focused</h3>
+                <p class="text-gray-600">Your content is processed securely and never stored on our servers.</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-gray-500 text-sm">
+            <p>© @DateTime.Now.Year MatrubhashaAI. All rights reserved.</p>
+            <p class="mt-1">Made with <i class="fas fa-heart text-red-500"></i> for Language content creators</p>
+        </footer>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Track selected languages
+        const selectedLanguages = {
+            'mr': { name: 'Marathi', flag: 'in', selected: true }
+        };
+
+        // Word count update
+        document.getElementById('blogContent').addEventListener('input', function() {
+            const text = this.value.trim();
+            const wordCount = text === '' ? 0 : text.split(/\s+/).length;
+            document.getElementById('wordCount').textContent = `${wordCount} words`;
+        });
+
+        // Toggle language selection
+        function toggleLanguage(code, name, flag) {
+            if (selectedLanguages[code]) {
+                removeLanguage(code);
+            } else {
+                addLanguage(code, name, flag);
+            }
+            updateLanguageDropdown();
+        }
+
+        function addLanguage(code, name, flag) {
+            selectedLanguages[code] = { name, flag, selected: true };
+            renderSelectedLanguages();
+        }
+
+        function removeLanguage(code) {
+            delete selectedLanguages[code];
+            renderSelectedLanguages();
+        }
+
+        function renderSelectedLanguages() {
+            const container = document.getElementById('selectedLanguages');
+            container.innerHTML = '';
+
+            for (const [code, data] of Object.entries(selectedLanguages)) {
+                const langElement = document.createElement('span');
+                langElement.className = 'inline-flex items-center bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full text-xs';
+                langElement.innerHTML = `
+                    <img src="https://flagcdn.com/w20/${data.flag}.png" class="language-flag" alt="${data.name}">
+                    ${data.name}
+                    <button onclick="removeLanguage('${code}')" class="ml-1 text-indigo-500 hover:text-indigo-700">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                `;
+                container.appendChild(langElement);
+            }
+        }
+
+        function toggleLanguageDropdown() {
+            const dropdown = document.getElementById('languageDropdown');
+            dropdown.classList.toggle('hidden');
+            updateLanguageDropdown();
+        }
+
+        function updateLanguageDropdown() {
+            const dropdown = document.getElementById('languageDropdown');
+            const items = dropdown.querySelectorAll('.flex.items-center');
+
+            items.forEach(item => {
+                const languageText = item.querySelector('span').textContent;
+                const languageCode = getLanguageCode(languageText);
+
+                if (selectedLanguages[languageCode]) {
+                    item.querySelector('.fa-check').parentElement.classList.remove('hidden');
+                } else {
+                    const checkElement = item.querySelector('.fa-check');
+                    if (checkElement) {
+                        checkElement.parentElement.classList.add('hidden');
+                    }
+                }
+            });
+        }
+
+        function getLanguageCode(languageName) {
+            const languageMap = {
+                'Marathi': 'mr',
+                'Hindi': 'hi',
+                'English': 'en',
+                'Spanish': 'es',
+                'French': 'fr',
+                'German': 'de',
+                'Japanese': 'ja',
+                'Chinese': 'zh'
+            };
+            return languageMap[languageName];
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('languageDropdown');
+            const target = event.target;
+
+            if (!target.closest('#selectedLanguages') && !target.closest('#languageDropdown') &&
+                !target.classList.contains('fa-chevron-down')) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        //This function will call API
+        async function translateContent() {
+            const content = document.getElementById('blogContent').value.trim();
+            const selectedLangs = Object.keys(selectedLanguages);
+
+            if (!content) {
+                alert('Please enter content to translate');
+                return;
+            }
+
+            if (selectedLangs.length === 0) {
+                alert('Please select target languages');
+                return;
+            }
+
+            // Show loading state
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('translateBtn').disabled = true;
+
+            try {
+                const translationsContainer = document.getElementById('translationsContainer');
+                translationsContainer.innerHTML = '';
+
+                // Translate to each selected language
+                for (const langCode of selectedLangs) {
+                    const langName = selectedLanguages[langCode].name;
+
+                    // Call backend API
+                    const response = await fetch('/Translation/Translate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            Content: content,
+                            TargetLanguage: langName
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Display translation
+                        const translationCard = `
+                            <div class="bg-gray-50 rounded-lg p-4 fade-in">
+                                <div class="flex items-center mb-3">
+                                    <img src="https://flagcdn.com/w20/${selectedLanguages[langCode].flag}.png"
+                                         class="language-flag" alt="${langName}">
+                                    <h4 class="font-medium text-gray-800">${langName} Translation</h4>
+                                    <button onclick="copyTranslation('${langCode}')"
+                                            class="ml-auto text-sm bg-white hover:bg-gray-100 px-2 py-1 rounded flex items-center">
+                                        <i class="fas fa-copy mr-1"></i> Copy
+                                    </button>
+                                </div>
+                                <div class="bg-white p-3 rounded border border-gray-200" id="translation-${langCode}">
+                                    ${result.translation}
+                                </div>
+                            </div>
+                        `;
+                        translationsContainer.innerHTML += translationCard;
+                    } else {
+                        console.error("Translation failed:", result.error);
+                        alert(`Failed to translate to ${langName}: ${result.error}`);
+                    }
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Translation failed. Check console for details.");
+            } finally {
+                // Hide loading state
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('translateBtn').disabled = false;
+                document.getElementById('resultsSection').classList.remove('hidden');
+            }
+        }
+
+        //fetch blog content from a URL,
+        async function fetchBlogContent() {
+            const url = document.getElementById('blogUrl').value.trim();
+            if (!url) {
+                alert('Please enter a valid URL');
+                return;
+            }
+
+            try {
+                // Call backend to scrape blog content (requires a separate API endpoint)
+                const response = await fetch('/Translation/FetchBlog?url=' + encodeURIComponent(url));
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('blogContent').value = result.content;
+                    // Update word count
+                    const event = new Event('input');
+                    document.getElementById('blogContent').dispatchEvent(event);
+                } else {
+                    alert('Failed to fetch blog: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error fetching blog: ' + error.message);
+            }
+        }
+        function showTranslationResults(content, sourceLang) {
+            const container = document.getElementById('translationsContainer');
+            container.innerHTML = '';
+
+            // Mock translations for demo purposes
+            const mockTranslations = {
+                'mr': "ही एक मराठी भाषेतील ब्लॉग पोस्टची नमुना भाषांतरित आवृत्ती आहे. हे फक्त एक डेमो दाखवण्यासाठी आहे.",
+                'hi': "यह ब्लॉग पोस्ट का हिंदी में अनुवादित संस्करण है। यह सिर्फ एक डेमो के लिए है।",
+                'en': "This is an English translated version of the blog post. This is just for a demo.",
+                'es': "Esta es una versión traducida al español de la publicación del blog. Esto es solo para una demostración.",
+                'fr': "Ceci est una version traduite en français de l'article de blog. Ceci est juste pour une démo."
+            };
+
+            for (const [code, data] of Object.entries(selectedLanguages)) {
+                const translationCard = document.createElement('div');
+                translationCard.className = 'bg-gray-50 rounded-lg p-4 fade-in';
+                if (code === 'mr') {
+                    translationCard.classList.add('marathi-highlight');
+                }
+
+                translationCard.innerHTML = `
+                    <div class="flex items-center mb-3">
+                        <img src="https://flagcdn.com/w20/${data.flag}.png" class="language-flag" alt="${data.name}">
+                        <h4 class="font-medium text-gray-800">${data.name} Translation</4>
+                        <button onclick="copyTranslation('${code}')" class="ml-auto text-sm bg-white hover:bg-gray-100 px-2 py-1 rounded flex items-center">
+                            <i class="fas fa-copy mr-1"></i> Copy
+                        </button>
+                    </div>
+                    <div class="bg-white p-3 rounded border border-gray-200" id="translation-${code}">
+                        ${mockTranslations[code] || "Translation not available for this language."}
+                    </div>
+                `;
+
+                container.appendChild(translationCard);
+            }
+        }
+
+        function copyTranslation(langCode) {
+            const text = document.getElementById(`translation-${langCode}`).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert(`${selectedLanguages[langCode].name} translation copied to clipboard!`);
+            });
+        }
+
+        function copyAllTranslations() {
+            let allText = '';
+            for (const [code] of Object.entries(selectedLanguages)) {
+                const langName = selectedLanguages[code].name;
+                const text = document.getElementById(`translation-${code}`).textContent;
+                allText += `=== ${langName} ===\n${text}\n\n`;
+            }
+
+            navigator.clipboard.writeText(allText.trim()).then(() => {
+                alert('All translations copied to clipboard!');
+            });
+        }
+
+        function downloadTranslations() {
+            let allText = '';
+            for (const [code] of Object.entries(selectedLanguages)) {
+                const langName = selectedLanguages[code].name;
+                const text = document.getElementById(`translation-${code}`).textContent;
+                allText += `=== ${langName} ===\n${text}\n\n`;
+            }
+
+            const blob = new Blob([allText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'blog_translations.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function fetchBlogContent() {
+            const url = document.getElementById('blogUrl').value.trim();
+            if (!url) {
+                alert('Please enter a valid URL');
+                return;
+            }
+
+            // In a real app, this would fetch the blog content from the URL
+            // For demo, we'll just show a sample content
+            document.getElementById('blogContent').value = "This is a sample blog post content that would be fetched from the provided URL. In a real application, this would be replaced with the actual content from the blog post. The translation feature would then work on this fetched content.";
+
+            // Update word count
+            const event = new Event('input');
+            document.getElementById('blogContent').dispatchEvent(event);
+
+            alert('Sample content loaded for demonstration. In a real app, this would fetch the actual blog content.');
+        }
+
+        // Initialize
+        renderSelectedLanguages();
+    </script>
+}

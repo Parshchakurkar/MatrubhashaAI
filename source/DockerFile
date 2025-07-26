@@ -1,0 +1,17 @@
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-windowsservercore-ltsc2019 as base
+WORKDIR /app
+EXPOSE 5000
+ENV ASPNETCORE_URLS=http://+:5000
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0-windowsservercore-ltsc2019 as build
+ARG configuration=Release
+WORKDIR /src
+COPY MatrubhashaAI.csproj ./
+RUN dotnet restore "MatrubhashaAI.csproj"
+COPY . .
+RUN dotnet build "MatrubhashaAI.csproj" -c $configuration -o /app/build
+RUN dotnet publish "MatrubhashaAI.csproj" -c $configuration -o /app/publish /p:UseAppHost=false 
+
+FROM base as final
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "MatrubhashaAI.dll"]
