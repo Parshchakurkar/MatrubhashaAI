@@ -131,6 +131,7 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
  
+#envirnmental File
+.env
 
- 
 _NCrunch*"source/appsettings.json" 
