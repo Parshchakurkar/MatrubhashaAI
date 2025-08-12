@@ -5,3 +5,8 @@
 .git
 *.md
 .cache
+.vscode/
+**/*.user
+**/*.Test/
+*.log
+appsettings.Development.json
