@@ -1,15 +1,27 @@
 
 trigger:
-- main
-
+  branches:
+    include:
+      - main
+  paths:
+    include: 
+      - 'source/DockerFile'
+    
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+jobs:
+  - job: BuildandpushImage
+    displayName: 'Create image from the Dockerfile'
+    steps:
+    - task: Docker@2
+      displayName: dockerbuild
+      inputs:
+        command: 'build'
+        Dockerfile: '**/Dockerfile'
+        addBaseImageData: false
+    - task: Docker@2
+      displayName: dockerpush
+      inputs:
+        command: 'push'
+        addBaseImageData: false
