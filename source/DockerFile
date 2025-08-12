@@ -1,9 +1,8 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-windowsservercore-ltsc2019 as base
-WORKDIR /app
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 as base
 EXPOSE 5000
 ENV ASPNETCORE_URLS=http://+:5000
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0-windowsservercore-ltsc2019 as build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 as build
 ARG configuration=Release
 WORKDIR /src
 COPY MatrubhashaAI.csproj ./
@@ -13,5 +12,9 @@ RUN dotnet build "MatrubhashaAI.csproj" -c $configuration -o /app/build
 RUN dotnet publish "MatrubhashaAI.csproj" -c $configuration -o /app/publish /p:UseAppHost=false 
 
 FROM base as final
+RUN groupadd -r appgroup && useradd -ms /bin/bash -g appgroup appuser
+WORKDIR /app
 COPY --from=build /app/publish .
+RUN chown -R appuser:appgroup /app 
+RUN su - appuser # using non root user to limit the
 ENTRYPOINT ["dotnet", "MatrubhashaAI.dll"]
