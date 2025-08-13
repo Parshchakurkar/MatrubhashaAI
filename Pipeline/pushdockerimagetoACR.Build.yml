@@ -28,6 +28,7 @@ jobs:
         dockerFile: 'source/DockerFile'
         imageName: 'matrubhashaai:$(Build.BuildId)'
     - task: Docker@1
+      displayName: Docker image push
       inputs:
         containerregistrytype: 'Azure Container Registry'
         azureSubscriptionEndpoint: $(serviceConnection)
