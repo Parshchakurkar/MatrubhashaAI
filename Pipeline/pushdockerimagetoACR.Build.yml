@@ -8,8 +8,8 @@ trigger:
       - 'source/DockerFile'
 
 variables: 
-  serviceConnection : 
-  ACRname: 
+  serviceConnection : ACR-ServiceConnection
+  ACRname: TestACRparsh
     
 pool:
   vmImage: ubuntu-latest
@@ -21,6 +21,8 @@ jobs:
     - task: Docker@2
       displayName: dockerbuild
       inputs:
+        containerRegistry: $(ACRname)
+        repository: matrubhashaai
         command: 'build'
         Dockerfile: '**/Dockerfile'
         addBaseImageData: false
@@ -28,4 +30,6 @@ jobs:
       displayName: dockerpush
       inputs:
         command: 'push'
+        containerRegistry: $(ACRname)
+        repository: matrubhashaai
         addBaseImageData: false
