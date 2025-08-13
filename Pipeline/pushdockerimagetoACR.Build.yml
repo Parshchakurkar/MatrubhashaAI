@@ -6,6 +6,10 @@ trigger:
   paths:
     include: 
       - 'source/DockerFile'
+
+variables: 
+  serviceConnection : 
+  ACRname: 
     
 pool:
   vmImage: ubuntu-latest
