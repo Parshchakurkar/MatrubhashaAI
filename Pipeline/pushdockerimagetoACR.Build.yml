@@ -1,4 +1,4 @@
-
+name: $(Build.DefinitionName)_$(Build.SourceBranchName)_1.00.00.$(rev:rrrr)
 trigger:
   branches:
     include:
@@ -29,6 +29,7 @@ jobs:
         imageName: 'matrubhashaai:$(Build.BuildId)'
     - task: Docker@1
       displayName: Docker image push
+      condition: succeeded()
       inputs:
         containerregistrytype: 'Azure Container Registry'
         azureSubscriptionEndpoint: $(serviceConnection)
