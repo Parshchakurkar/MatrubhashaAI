@@ -1,0 +1,38 @@
+name: $(Build.DefinitionName)_$(Build.SourceBranchName)_1.00.00.$(rev:rrrr)
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include: 
+      - 'source/DockerFile'
+
+variables: 
+  serviceConnection : ACR-ServiceConnection
+  ACRname: TestACRparsh
+    
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+  - job: BuildandpushImage
+    displayName: 'Create image from the Dockerfile'
+    steps:
+    - task: Docker@1
+      displayName: Dockerbuild
+      inputs:
+        containerregistrytype: 'Azure Container Registry'
+        azureSubscriptionEndpoint: $(serviceConnection)
+        azureContainerRegistry: 'testacrparsh.azurecr.io'
+        command: 'Build an image'
+        dockerFile: 'source/DockerFile'
+        imageName: 'matrubhashaai:$(Build.BuildId)'
+    - task: Docker@1
+      displayName: Docker image push
+      condition: succeeded()
+      inputs:
+        containerregistrytype: 'Azure Container Registry'
+        azureSubscriptionEndpoint: $(serviceConnection)
+        azureContainerRegistry: 'testacrparsh.azurecr.io'
+        command: 'Push an image'
+        imageName: 'matrubhashaai:$(Build.BuildId)'
