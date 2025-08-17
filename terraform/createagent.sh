@@ -3,7 +3,7 @@ set -e
 
 # Variables (replace with Key Vault/secure injection in production)
 AZP_URL="https://dev.azure.com/parshchakurkar"
-AZP_TOKEN="CmIhlzEzlYrNv0J4NdceWipKJ6ZLuZYg6N4VG4BnhziSDDW2ABGVJQQJ99BHACAAAAAAAAAAAAASAZDO4yiZ "
+AZP_TOKEN="put-access-tokenhere "
 AZP_POOL="Default"
 AZP_AGENT_NAME=linuxagent
 
