@@ -22,7 +22,7 @@ resource "azurerm_public_ip" "pip" {
   resource_group_name = azurerm_resource_group.matrubhashaai-rg.name
   location            = azurerm_resource_group.matrubhashaai-rg.location
   allocation_method   = "Static"
-  depends_on = [ azurerm_resource_group.matrubhashaai-rg ]
+  depends_on          = [azurerm_resource_group.matrubhashaai-rg]
 }
 resource "azurerm_network_interface" "matrubhashaai-nic" {
   name                = "matrubhashaai-nic"
@@ -32,7 +32,7 @@ resource "azurerm_network_interface" "matrubhashaai-nic" {
     name                          = "matrubhashaa-ip-config"
     subnet_id                     = azurerm_subnet.matrubhashaai-subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = azurerm_public_ip.pip.id
+    public_ip_address_id          = azurerm_public_ip.pip.id
   }
   depends_on = [azurerm_virtual_network.matrubhashaai-vnet, azurerm_public_ip.pip]
 }
@@ -87,3 +87,18 @@ resource "azurerm_linux_virtual_machine" "matrubhashaai-vm" {
 
 }
 
+# Configure Agent
+resource "azurerm_virtual_machine_extension" "agent_install" {
+  name                 = "devops-agent-extension"
+  virtual_machine_id   = azurerm_linux_virtual_machine.matrubhashaai-vm.id
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.1"
+
+  settings           = <<SETTINGS
+    {
+      "fileUris": [], 
+      "commandToExecute": "bash -c '${base64encode(file("${path.module}/createagent.sh"))}'"
+    }
+    SETTINGS
+}
