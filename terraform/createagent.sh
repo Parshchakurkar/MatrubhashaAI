@@ -23,7 +23,7 @@ chmod +x ./config.sh ./run.sh ./env.sh ./bin/Agent.Listener
 
 # Variables (replace with Key Vault/secure injection in production)
 AZP_URL="https://dev.azure.com/parshchakurkar"
-AZP_TOKEN="5IqbkLPVFHLhqCH99JvKoMtuP66RWdVXkMJoC0Px0VNEALjW8xh8JQQJ99BHACAAAAAAAAAAAAASAZDOIRVG"
+AZP_TOKEN="your token here"
 AZP_POOL="Default"
 AZP_AGENT_NAME=linuxagent
 
