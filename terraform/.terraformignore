@@ -1,0 +1,39 @@
+# ----------------------------
+# Terraform local files
+# ----------------------------
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.lock.hcl
+
+# ----------------------------
+# IDE & editor files
+# ----------------------------
+*.iml
+*.ipr
+*.iws
+.idea/
+.vscode/
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# ----------------------------
+# OS-specific files
+# ----------------------------
+.DS_Store
+Thumbs.db
+
+# ----------------------------
+# Testing, examples, docs (optional)
+# ----------------------------
+examples/
+tests/
+docs/
