@@ -9,3 +9,6 @@ It is created inside the source location.
 #Terraform:
 - Terraform used to create the private/ Self hosted agent in linux machine.
 - 
+
+#Kubernetes:
+- Deployment of the application in cluster.
