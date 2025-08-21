@@ -27,9 +27,11 @@ jobs:
         command: 'Build an image'
         dockerFile: 'source/DockerFile'
         imageName: 'matrubhashaai:$(Build.BuildId)'
+
+  #-------------------------------------------------- if Docker build passed and changes was in docker file then only run push task.
     - task: Docker@1
       displayName: Docker image push
-      condition: succeeded()
+      condition: succeeded() 
       inputs:
         containerregistrytype: 'Azure Container Registry'
         azureSubscriptionEndpoint: $(serviceConnection)
