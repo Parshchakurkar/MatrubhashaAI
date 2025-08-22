@@ -135,3 +135,14 @@ $RECYCLE.BIN/
 .env
 
 _NCrunch*"source/appsettings.json" 
+
+#=========================
+# Terraform
+#=========================
+
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+.crash
+*.log
