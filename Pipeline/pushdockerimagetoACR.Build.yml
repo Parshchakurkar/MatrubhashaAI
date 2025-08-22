@@ -1,5 +1,5 @@
 name: $(Build.DefinitionName)_$(Build.SourceBranchName)_1.00.00.$(rev:rrrr)
-trigger:
+pr:
   branches:
     include:
       - main
@@ -7,10 +7,11 @@ trigger:
     include: 
       - 'source/DockerFile'
 
+
 variables: 
-  serviceConnection : ACR-ServiceConnection
-  ACRname: TestACRparsh
-    
+  serviceConnection : matrubhashaai_project
+  ACRname: matrubhashaaiacr
+
 pool:
   vmImage: ubuntu-latest
 
@@ -28,7 +29,6 @@ jobs:
         dockerFile: 'source/DockerFile'
         imageName: 'matrubhashaai:$(Build.BuildId)'
 
-  #-------------------------------------------------- if Docker build passed and changes was in docker file then only run push task.
     - task: Docker@1
       displayName: Docker image push
       condition: succeeded() 
