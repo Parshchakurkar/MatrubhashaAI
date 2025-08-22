@@ -11,6 +11,7 @@ pr:
 variables: 
   serviceConnection : matrubhashaai_project
   ACRname: matrubhashaaiacr
+  AcrPrefix: matrubhashaaiacr.azurecr.io
 
 pool:
   vmImage: ubuntu-latest
@@ -23,8 +24,8 @@ jobs:
       displayName: Dockerbuild
       inputs:
         containerregistrytype: 'Azure Container Registry'
-        azureSubscriptionEndpoint: $(serviceConnection)
-        azureContainerRegistry: 'testacrparsh.azurecr.io'
+        azureSubscriptionEndpoint: '$(serviceConnection)'
+        azureContainerRegistry: '$(AcrPrefix)'
         command: 'Build an image'
         dockerFile: 'source/DockerFile'
         imageName: 'matrubhashaai:$(Build.BuildId)'
@@ -34,7 +35,7 @@ jobs:
       condition: succeeded() 
       inputs:
         containerregistrytype: 'Azure Container Registry'
-        azureSubscriptionEndpoint: $(serviceConnection)
-        azureContainerRegistry: 'testacrparsh.azurecr.io'
+        azureSubscriptionEndpoint: '$(serviceConnection)'
+        azureContainerRegistry: '$(AcrPrefix)'
         command: 'Push an image'
         imageName: 'matrubhashaai:$(Build.BuildId)'
