@@ -12,6 +12,7 @@ variables:
   serviceConnection : matrubhashaai_project
   ACRname: matrubhashaaiacr
   AcrPrefix: matrubhashaaiacr.azurecr.io
+  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
 
 pool:
   vmImage: ubuntu-latest
@@ -30,9 +31,10 @@ jobs:
         dockerFile: 'source/DockerFile'
         imageName: 'matrubhashaai:$(Build.BuildId)'
 
+# push only when there is trigger from main branch
     - task: Docker@1
       displayName: Docker image push
-      condition: succeeded() 
+      condition: and(succeeded(),eq(variables.isMain, true)) 
       inputs:
         containerregistrytype: 'Azure Container Registry'
         azureSubscriptionEndpoint: '$(serviceConnection)'
