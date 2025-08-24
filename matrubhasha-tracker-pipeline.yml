@@ -1,14 +1,60 @@
 # tracker pipeline
 # 
+name: $(Build.DefinitionName)_$(Build.SourceBranchName)_$(rev:rrrr)
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - 'terraform/cluster creation'
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: windows-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variables:
+  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+jobs:
+  - job: Terraformresourcecreation
+    displayName: Terraform Resource Creation
+    steps:
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+        displayName: Install Terraform
+        inputs:
+          terraformVersion: 'latest'
+      
+      - task: TerraformTask@5
+        displayName: Terrafor init
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          workingDirectory: '$(Build.SourcesDirectory)/MatrubhashaAI/terraform/cluster creation'
+          backendAzureRmUseEntraIdForAuthentication: false
+          backendServiceArm: 'matrubhashaai_project'
+          backendAzureRmStorageAccountName: 'matrubhashaai'
+          backendAzureRmContainerName: 'Terraform'
+          backendAzureRmKey: 'terraform.tfstate'
+      - task: TerraformTask@5
+        displayName: Terraform validate
+        inputs:
+          provider: 'azurerm'
+          command: 'validate'
+          workingDirectory: '$(Build.SourcesDirectory)/MatrubhashaAI/terraform/cluster creation'
+      
+      - task: TerraformTask@5
+        displayName: Terraform plan
+        inputs:
+          provider: 'azurerm'
+          command: 'plan'
+          workingDirectory: '$(Build.SourcesDirectory)/MatrubhashaAI/terraform/cluster creation'
+          environmentServiceNameAzureRM: 'matrubhashaai_project'
+
+      - task: TerraformTask@5
+        displayName: Terraform Apply
+        inputs:
+          provider: 'azurerm'
+          command: 'apply'
+          workingDirectory: '$(Build.SourcesDirectory)/MatrubhashaAI/terraform/cluster creation'
+          environmentServiceNameAzureRM: 'matrubhashaai_project'
