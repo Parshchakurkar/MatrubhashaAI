@@ -1,4 +1,9 @@
 terraform {
+  backend "azurerm" {
+    storage_account_name = "demo"
+    container_name = "demo"
+    key = "demo"
+  }
   required_version = ">=0.12"
   required_providers {
     azurerm = {
