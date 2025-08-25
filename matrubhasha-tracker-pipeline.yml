@@ -1,14 +1,72 @@
 # tracker pipeline
 # 
+name: $(Build.DefinitionName)_$(Build.SourceBranchName)_$(rev:rrrr)
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - 'terraform/cluster creation'
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: windows-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variables:
+  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  serviceConnection : matrubhashaai_project
+  terraformFolder : '$(Build.SourcesDirectory)/terraform/cluster creation'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+jobs:
+  - job: Terraformresourcecreation
+    displayName: Terraform Resource Creation
+    steps:
+      - checkout: self
+        lfs: true
+        displayName: 'checking out'
+      - task: TerraformInstaller@1
+        displayName: Install Terraform
+        inputs:
+          terraformVersion: 'latest'
+      
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            cd '$(terraformFolder)'
+            ls
+      
+      - task: TerraformTask@5
+        displayName: Terrafor init
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          workingDirectory: '$(terraformFolder)'
+          backendServiceArm: '$(serviceConnection)'
+          backendAzureRmStorageAccountName: 'matrubhashaai'
+          backendAzureRmContainerName: 'Terraform'
+          backendAzureRmKey: 'terraform.tfstate'
+
+      - task: TerraformTask@5
+        displayName: Terraform validate
+        inputs:
+          provider: 'azurerm'
+          command: 'validate'
+          workingDirectory: '$(terraformFolder)'
+      
+      - task: TerraformTask@5
+        displayName: Terraform plan
+        inputs:
+          provider: 'azurerm'
+          command: 'plan'
+          workingDirectory: '$(terraformFolder)'
+          environmentServiceNameAzureRM: '$(serviceConnection)'
+
+      - task: TerraformTask@5
+        displayName: Terraform Apply
+        inputs:
+          provider: 'azurerm'
+          command: 'apply'
+          workingDirectory: '$(terraformFolder)'
+          environmentServiceNameAzureRM: '$(serviceConnection)'
