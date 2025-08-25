@@ -22,7 +22,10 @@ jobs:
   - job: Terraformresourcecreation
     displayName: Terraform Resource Creation
     steps:
-      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+      - checkout: self
+        lfs: true
+        displayName: 'checking out'
+      - task: TerraformInstaller@1
         displayName: Install Terraform
         inputs:
           terraformVersion: 'latest'
