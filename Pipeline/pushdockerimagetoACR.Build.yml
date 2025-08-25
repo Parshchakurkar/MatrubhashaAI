@@ -34,7 +34,7 @@ jobs:
 # push only when there is trigger from main branch
     - task: Docker@1
       displayName: Docker image push
-      condition: and(succeeded(),eq(variables.isMain, true)) 
+      #condition: and(succeeded(),eq(variables.isMain, true)) 
       inputs:
         containerregistrytype: 'Azure Container Registry'
         azureSubscriptionEndpoint: '$(serviceConnection)'
