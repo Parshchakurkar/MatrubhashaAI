@@ -1,7 +1,7 @@
 # MatrubhashaAI
 its an AI Application on a provider of blog link it will translate blog in the selected language
 # Project HLD:
-<img width="1002" height="460" alt="Screenshot 2025-08-21 at 7 48 48 PM" src="https://github.com/user-attachments/assets/86ecec10-b5ee-4e24-8cce-bb638102c902" />
+<img width="894" height="351" alt="Screenshot 2025-08-26 at 12 30 19 AM" src="https://github.com/user-attachments/assets/aa6d7cf2-d2d5-45a8-8d8b-0cc71e59b4c2" />
 
 
 ## Dockerfile:
