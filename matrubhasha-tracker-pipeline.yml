@@ -65,9 +65,9 @@ jobs:
           provider: 'azurerm'
           command: 'plan'
           workingDirectory: '$(terraformFolder)'
+          commandOptions: '-var subscription_id=$(subscriptionId)'
           environmentServiceNameAzureRM: '$(serviceConnection)'
-        env:
-          subscription_id: $(subscriptionId)
+        
 
       - task: TerraformTask@5
         displayName: Terraform Apply
