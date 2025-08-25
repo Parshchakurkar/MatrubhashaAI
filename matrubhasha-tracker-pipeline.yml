@@ -14,9 +14,13 @@ pool:
   vmImage: windows-latest
 
 variables:
-  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
-  serviceConnection : matrubhashaai_project
-  terraformFolder : '$(Build.SourcesDirectory)/terraform/cluster creation'
+  - group : Terraform-varibales
+  - name: isMain
+    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  - name: serviceConnection 
+    value: matrubhashaai_project
+  - name: terraformFolder 
+    value: '$(Build.SourcesDirectory)/terraform/cluster creation'
 
 jobs:
   - job: Terraformresourcecreation
@@ -62,6 +66,8 @@ jobs:
           command: 'plan'
           workingDirectory: '$(terraformFolder)'
           environmentServiceNameAzureRM: '$(serviceConnection)'
+        env:
+          subscription_id: $(subscriptionId)
 
       - task: TerraformTask@5
         displayName: Terraform Apply
@@ -70,3 +76,5 @@ jobs:
           command: 'apply'
           workingDirectory: '$(terraformFolder)'
           environmentServiceNameAzureRM: '$(serviceConnection)'
+        env:
+          subscription_id: $(subscriptionId)
