@@ -16,7 +16,7 @@ pool:
 variables:
   isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
   serviceConnection : matrubhashaai_project
-  terraformFolder : '$(Build.SourcesDirectory)/MatrubhashaAI/terraform/cluster creation'
+  terraformFolder : '$(Build.SourcesDirectory)/terraform/cluster creation'
 
 jobs:
   - job: Terraformresourcecreation
