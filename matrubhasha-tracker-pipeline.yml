@@ -30,17 +30,24 @@ jobs:
         inputs:
           terraformVersion: 'latest'
       
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            cd '$(terraformFolder)'
+            ls
+      
       - task: TerraformTask@5
         displayName: Terrafor init
         inputs:
           provider: 'azurerm'
           command: 'init'
           workingDirectory: '$(terraformFolder)'
-          backendAzureRmUseEntraIdForAuthentication: false
           backendServiceArm: '$(serviceConnection)'
           backendAzureRmStorageAccountName: 'matrubhashaai'
           backendAzureRmContainerName: 'Terraform'
           backendAzureRmKey: 'terraform.tfstate'
+
       - task: TerraformTask@5
         displayName: Terraform validate
         inputs:
