@@ -1,5 +1,5 @@
 name: $(Build.DefinitionName)_$(Build.SourceBranchName)_1.00.00.$(rev:rrrr)
-trigger:
+pr:
   branches:
     include:
       - main
@@ -7,10 +7,13 @@ trigger:
     include: 
       - 'source/DockerFile'
 
+
 variables: 
-  serviceConnection : ACR-ServiceConnection
-  ACRname: TestACRparsh
-    
+  serviceConnection : matrubhashaai_project
+  ACRname: matrubhashaaiacr
+  AcrPrefix: matrubhashaaiacr.azurecr.io
+  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+
 pool:
   vmImage: ubuntu-latest
 
@@ -22,17 +25,19 @@ jobs:
       displayName: Dockerbuild
       inputs:
         containerregistrytype: 'Azure Container Registry'
-        azureSubscriptionEndpoint: $(serviceConnection)
-        azureContainerRegistry: 'testacrparsh.azurecr.io'
+        azureSubscriptionEndpoint: '$(serviceConnection)'
+        azureContainerRegistry: '$(AcrPrefix)'
         command: 'Build an image'
         dockerFile: 'source/DockerFile'
         imageName: 'matrubhashaai:$(Build.BuildId)'
+
+# push only when there is trigger from main branch
     - task: Docker@1
       displayName: Docker image push
-      condition: succeeded()
+      condition: and(succeeded(),eq(variables.isMain, true)) 
       inputs:
         containerregistrytype: 'Azure Container Registry'
-        azureSubscriptionEndpoint: $(serviceConnection)
-        azureContainerRegistry: 'testacrparsh.azurecr.io'
+        azureSubscriptionEndpoint: '$(serviceConnection)'
+        azureContainerRegistry: '$(AcrPrefix)'
         command: 'Push an image'
         imageName: 'matrubhashaai:$(Build.BuildId)'
