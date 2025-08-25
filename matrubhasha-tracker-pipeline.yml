@@ -75,6 +75,5 @@ jobs:
           provider: 'azurerm'
           command: 'apply'
           workingDirectory: '$(terraformFolder)'
+          commandOptions: '-var subscription_id=$(subscriptionId)'
           environmentServiceNameAzureRM: '$(serviceConnection)'
-        env:
-          subscription_id: $(subscriptionId)
