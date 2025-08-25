@@ -49,7 +49,7 @@ jobs:
           workingDirectory: '$(terraformFolder)'
           backendServiceArm: '$(serviceConnection)'
           backendAzureRmStorageAccountName: 'matrubhashaai'
-          backendAzureRmContainerName: 'Terraform'
+          backendAzureRmContainerName: 'terraform'
           backendAzureRmKey: 'terraform.tfstate'
 
       - task: TerraformTask@5
