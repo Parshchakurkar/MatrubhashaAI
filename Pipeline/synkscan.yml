@@ -1,0 +1,4 @@
+name: $(Build.DefinitionName)_$(Build.SourceBranch)_$(rev:rrrr)
+
+trigger:
+
