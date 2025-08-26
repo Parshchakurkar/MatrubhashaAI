@@ -1,4 +1,17 @@
 name: $(Build.DefinitionName)_$(Build.SourceBranch)_$(rev:rrrr)
 
 trigger:
+  branches:
+    include:
+      - main
+  
 
+variables:
+
+
+jobs:
+  - job: SnykScan
+    displayName: 'Snyk Scan'
+    steps:
+      - checkout: self
+      
