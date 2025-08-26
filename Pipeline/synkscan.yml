@@ -4,14 +4,19 @@ trigger:
   branches:
     include:
       - main
-  
-
-variables:
-
 
 jobs:
   - job: SnykScan
     displayName: 'Snyk Scan'
     steps:
       - checkout: self
-      
+      - task: SnykSecurityScan@1
+        displayName: snyk scan
+        inputs:
+          serviceConnectionEndpoint: 'snyk-connection'
+          testType: 'app'
+          severityThreshold: 'high'
+          monitorWhen: 'always'
+          failOnIssues: false
+          projectName: 'Parshchakurkar/MatrubhashaAI'
+          organization: 'parshchakurkar'
