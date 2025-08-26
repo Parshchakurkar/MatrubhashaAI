@@ -5,6 +5,9 @@ trigger:
     include:
       - main
 
+pool:
+  vmImage: windows-latest
+
 jobs:
   - job: SnykScan
     displayName: 'Snyk Scan'
