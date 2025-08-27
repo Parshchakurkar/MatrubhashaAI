@@ -8,18 +8,36 @@ trigger:
 pool:
   vmImage: windows-latest
 
+variables:
+  snycServiceConnection : snyk-connection
+  snycProjectName: 'Parshchakurkar/MatrubhashaAI'
+  snyOrg : 'parshchakurkar' 
+
 jobs:
   - job: SnykScan
     displayName: 'Snyk Scan'
     steps:
       - checkout: self
       - task: SnykSecurityScan@1
-        displayName: snyk scan
+        displayName: 'Snyk Scan - app code'
         inputs:
-          serviceConnectionEndpoint: 'snyk-connection'
-          testType: 'app'
-          severityThreshold: 'high'
-          monitorWhen: 'always'
+          serviceConnectionEndpoint: '$(snycServiceConnection)'
+          testType: 'code'
           failOnIssues: false
-          projectName: 'Parshchakurkar/MatrubhashaAI'
-          organization: 'parshchakurkar'
+          projectName: '$(snycProjectName)'
+          organization: '$(snyOrg)'
+          testDirectory: '$(Build.SourcesDirectory)\source'
+          additionalArguments: '--exlude = DockerFile, .dockerignore'
+      
+      - task: SnykSecurityScan@1
+        displayName: 'Docker File Scan container'
+        inputs:
+          serviceConnectionEndpoint: '$(snycServiceConnection)'
+          testType: 'container'
+          dockerImageName: 'matrubhashaai'
+          dockerfilePath: '$(Build.SourceDirectory)/source/DockerFile'
+          monitorWhen: 'always'
+          failOnIssues: true
+          projectName: '$(snycProjectName)'
+          organization: '$(snyOrg)'
+      
