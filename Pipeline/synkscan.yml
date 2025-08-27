@@ -41,7 +41,6 @@ jobs:
         inputs:
           serviceConnectionEndpoint: '$(snykServiceConnection)'
           testType: 'app'
-          projectName: '$(snykProjectName)'
           organization: '$(snykOrg)'
           failOnIssues: false
           additionalArguments: '--all-projects --target-reference=SEL$(version)_U$(UpdateNumber) --tags=Version=$(Build.BuildId),branch=$(Build.SourceBranch) --exclude="kubernetes","terraform","cluster creation","vmCreation","Pipeline"'
@@ -52,7 +51,6 @@ jobs:
         inputs:
           serviceConnectionEndpoint: '$(snykServiceConnection)'
           testType: 'code'
-          projectName: '$(snykProjectName)'
           organization: '$(snykOrg)'
           failOnIssues: false
           failOnThreshold: 'critical'
