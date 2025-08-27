@@ -9,6 +9,10 @@ its an AI Application on a provider of blog link it will translate blog in the s
 1. Resource group with name matrubhashaai-rg in central india
 2. Storage account with name 'matrubhashaai'
 3. container with name of terraform
+4. Service connection to resource manger with name matrubhashaai_project
+5. Service connection with below access on storage account:
+  - Storage Blob Data Contributor
+  - Storage Queue Data Contributor
 
 ## Dockerfile:
 It is created inside the source location.
