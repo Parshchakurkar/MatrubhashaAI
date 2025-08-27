@@ -18,11 +18,19 @@ jobs:
     displayName: 'Snyk Scan'
     steps:
       - checkout: self
+
+      - task: NuGetCommand@2
+        displayName: 'Nuget Restore'
+        inputs:
+          command: 'restore'
+          restoreSolution: '$(Build.SourcesDirectory)/source/MatrubhashaAI.sln'
+          feedsToUse: 'select'
+          vstsFeed: 'fb72fbac-d94e-45b7-96d4-7f2990641340'
       - task: SnykSecurityScan@1
         displayName: 'Snyk Scan - app code'
         inputs:
           serviceConnectionEndpoint: '$(snycServiceConnection)'
-          testType: 'code'
+          testType: 'app'
           failOnIssues: false
           projectName: '$(snycProjectName)'
           organization: '$(snyOrg)'
@@ -40,4 +48,14 @@ jobs:
           failOnIssues: true
           projectName: '$(snycProjectName)'
           organization: '$(snyOrg)'
-      
+
+      - task: SnykSecurityScan@1
+        displayName: 'Snyk scan - IAC and k8s'
+        inputs:
+          serviceConnectionEndpoint: '$(snycServiceConnection)'
+          testType: 'code'
+          failOnIssues: false
+          projectName: '$(snycProjectName)'
+          organization: '$(snyOrg)'
+          additionalArguments: '--exclude=Pipeline,source'
+          failOnThreshold: 'high'
