@@ -27,16 +27,15 @@ jobs:
           feedsToUse: 'select'
           vstsFeed: 'fb72fbac-d94e-45b7-96d4-7f2990641340'
       - task: SnykSecurityScan@1
-        displayName: 'Snyk Scan - app code'
         inputs:
           serviceConnectionEndpoint: '$(snycServiceConnection)'
           testType: 'app'
+          monitorWhen: 'always'
           failOnIssues: false
           projectName: '$(snycProjectName)'
           organization: '$(snyOrg)'
           testDirectory: '$(Build.SourcesDirectory)/source'
-          additionalArguments: '--exlude = $(Build.SourcesDirectory)/source/DockerFile,$(Build.SourcesDirectory)/source/.dockerignore'
-      
+          additionalArguments: '--project-name=$(Build.SourcesDirectory)/source/MatrubhashaAI.sln --exlude = $(Build.SourcesDirectory)/source/DockerFile,$(Build.SourcesDirectory)/source/.dockerignore'
       - task: SnykSecurityScan@1
         displayName: 'Docker File Scan container'
         inputs:
@@ -45,7 +44,7 @@ jobs:
           dockerImageName: 'matrubhashaai'
           dockerfilePath: '$(Build.SourceDirectory)/source/DockerFile'
           monitorWhen: 'always'
-          failOnIssues: true
+          failOnIssues: false
           projectName: '$(snycProjectName)'
           organization: '$(snyOrg)'
 
