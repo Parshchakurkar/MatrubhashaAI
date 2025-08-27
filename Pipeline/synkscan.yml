@@ -1,4 +1,4 @@
-name: $(Build.DefinitionName)_$(Build.SourceBranch)_$(rev:rrrr)
+name: $(Build.DefinitionName)_$(Build.SourceBranchName)_$(date:yyyyMMdd)$(rev:.rrrr)
 
 trigger:
   branches:
@@ -9,9 +9,18 @@ pool:
   vmImage: windows-latest
 
 variables:
-  snycServiceConnection : snyk-connection
-  snycProjectName: 'Parshchakurkar/MatrubhashaAI'
-  snyOrg : 'parshchakurkar' 
+  - name: snykServiceConnection
+    value: snyk-connection
+  - name: snykProjectName
+    value: 'Parshchakurkar/MatrubhashaAI'
+  - name: snykOrg 
+    value: 'parshchakurkar' 
+  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+      - name: SnykMonitor
+        value: 'always'
+  - ${{ else }}:
+      - name: SnykMonitor
+        value: 'never'
 
 jobs:
   - job: SnykScan
@@ -26,34 +35,24 @@ jobs:
           restoreSolution: '$(Build.SourcesDirectory)/source/MatrubhashaAI.sln'
           feedsToUse: 'select'
           vstsFeed: 'fb72fbac-d94e-45b7-96d4-7f2990641340'
+      
       - task: SnykSecurityScan@1
+        displayName: "Snyk OSS Scan"
         inputs:
-          serviceConnectionEndpoint: '$(snycServiceConnection)'
+          serviceConnectionEndpoint: '$(snykServiceConnection)'
           testType: 'app'
-          monitorWhen: 'always'
+          projectName: '$(snykProjectName)'
+          organization: '$(snykOrg)'
           failOnIssues: false
-          projectName: '$(snycProjectName)'
-          organization: '$(snyOrg)'
-          additionalArguments: '--project-name=$(Build.SourcesDirectory)/source/MatrubhashaAI.sln --exlude = $(Build.SourcesDirectory)/source/DockerFile,$(Build.SourcesDirectory)/source/.dockerignore'
-      - task: SnykSecurityScan@1
-        displayName: 'Docker File Scan container'
-        inputs:
-          serviceConnectionEndpoint: '$(snycServiceConnection)'
-          testType: 'container'
-          dockerImageName: 'matrubhashaai'
-          dockerfilePath: '$(Build.SourceDirectory)/source/DockerFile'
-          monitorWhen: 'always'
-          failOnIssues: false
-          projectName: '$(snycProjectName)'
-          organization: '$(snyOrg)'
+          additionalArguments: '--all-projects --target-reference=SEL$(version)_U$(UpdateNumber) --tags=Version=$(Build.BuildId),branch=$(Build.SourceBranch) --exclude="kubernetes","terraform","cluster creation","vmCreation","Pipeline"'
+          failOnThreshold: 'critical'
 
       - task: SnykSecurityScan@1
-        displayName: 'Snyk scan - IAC and k8s'
+        displayName: "Snyk Code Scan"
         inputs:
-          serviceConnectionEndpoint: '$(snycServiceConnection)'
+          serviceConnectionEndpoint: '$(snykServiceConnection)'
           testType: 'code'
+          projectName: '$(snykProjectName)'
+          organization: '$(snykOrg)'
           failOnIssues: false
-          projectName: '$(snycProjectName)'
-          organization: '$(snyOrg)'
-          additionalArguments: '--exclude=Pipeline,source'
-          failOnThreshold: 'high'
+          failOnThreshold: 'critical'
