@@ -34,8 +34,8 @@ jobs:
           failOnIssues: false
           projectName: '$(snycProjectName)'
           organization: '$(snyOrg)'
-          testDirectory: '$(Build.SourcesDirectory)\source'
-          additionalArguments: '--exlude = DockerFile, .dockerignore'
+          testDirectory: '$(Build.SourcesDirectory)/source'
+          additionalArguments: '--exlude = $(Build.SourcesDirectory)/source/DockerFile,$(Build.SourcesDirectory)/source/.dockerignore'
       
       - task: SnykSecurityScan@1
         displayName: 'Docker File Scan container'
