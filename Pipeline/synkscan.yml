@@ -43,7 +43,7 @@ jobs:
           testType: 'app'
           organization: '$(snykOrg)'
           failOnIssues: false
-          additionalArguments: '--all-projects --target-reference=$(snykProjectName) --tags=Version=$(Build.BuildId),branch=$(Build.SourceBranch) --exclude="kubernetes","terraform","cluster creation","vmCreation","Pipeline"'
+          additionalArguments: '--all-projects --target-reference=$(snykProjectName) --exclude="kubernetes","terraform","cluster creation","vmCreation","Pipeline"'
           failOnThreshold: 'critical'
 
       - task: SnykSecurityScan@1
