@@ -41,8 +41,9 @@ jobs:
         inputs:
           serviceConnectionEndpoint: '$(snykServiceConnection)'
           testType: 'app'
-          organization: '$(snykOrg)'
+          monitorWhen: '$(SnykMonitor)'
           failOnIssues: false
+          organization: '$(snykOrg)'
           additionalArguments: '--all-projects --target-reference=$(snykProjectName) --exclude="kubernetes","terraform","cluster creation","vmCreation","Pipeline"'
           failOnThreshold: 'critical'
 
@@ -54,3 +55,4 @@ jobs:
           failOnIssues: false
           organization: '$(snykOrg)'
           failOnThreshold: 'high'
+          monitorWhen: '$(SnykMonitor)'
