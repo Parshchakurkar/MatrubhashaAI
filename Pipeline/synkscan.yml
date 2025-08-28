@@ -43,7 +43,7 @@ jobs:
           testType: 'app'
           organization: '$(snykOrg)'
           failOnIssues: false
-          additionalArguments: '--all-projects --target-reference=SEL$(version)_U$(UpdateNumber) --tags=Version=$(Build.BuildId),branch=$(Build.SourceBranch) --exclude="kubernetes","terraform","cluster creation","vmCreation","Pipeline"'
+          additionalArguments: '--all-projects --target-reference=SEL$(version)_U$(UpdateNumber) --tags=Version=$(Build.BuildId),branch=$(Build.SourceBranch) --exclude="kubernetes","terraform","cluster creation","vmCreation","Pipeline" --org=0e1bfa17-f40b-42ef-863e-9c1091589066'
           failOnThreshold: 'critical'
 
       - task: SnykSecurityScan@1
