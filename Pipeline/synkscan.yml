@@ -51,7 +51,6 @@ jobs:
         inputs:
           serviceConnectionEndpoint: '$(snykServiceConnection)'
           testType: 'code'
-          organization: '$(snykOrg)'
           failOnIssues: false
-          #additionalArguments: '--all-projects  --tags=Version=$(Build.BuildId),branch=$(Build.SourceBranch) --exclude="kubernetes","terraform","cluster creation","vmCreation","Pipeline"'
-          failOnThreshold: 'critical'
+          organization: '$(snykOrg)'
+          failOnThreshold: 'high'
