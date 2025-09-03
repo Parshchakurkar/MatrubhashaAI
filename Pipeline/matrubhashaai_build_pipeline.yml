@@ -1,0 +1,4 @@
+#Developer : Prashant Chakurkar
+# date: 03/09/2025
+name: $(Build.DefinitionName)_$(Build.SourceBranchName)_1.0.0.($rev:rrrr)
+
