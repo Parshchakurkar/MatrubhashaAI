@@ -3,3 +3,56 @@
 
 name: $(Build.DefinitionName)_$(Build.SourceBranchName)_1.0.0.($rev:rrrr)
 
+#variables:
+
+
+pool:
+    vmImage: windows-latest
+
+jobs:
+    - job: Build
+      displayName: Build Application
+      steps:
+          - checkout: self
+            lfs: true
+          - task: NuGetCommand@2
+            displayName: Nuget restore
+            inputs:
+              command: 'restore'
+              restoreSolution: '$(Build.SourceDirectory)/source/MatrubhashaAI.sln'
+              feedsToUse: 'config'
+
+          - task: VSBuild@1
+            displayName: 'Matrubhasha build'
+            inputs:
+              solution: '$(Build.SourceDirectory)/source/MatrubhashaAI.sln'
+              platform: 'x86'
+              configuration: 'Release'
+
+          - task: PythonScript@0
+            displayName: 'Create Folder'
+            inputs:
+              scriptSource: 'inline'
+              script: |
+                import os
+                path = "$(Build.SourceDirectory)/Setup"
+                os.mkdir(path)
+              failOnStderr: true
+
+          - task: CopyFiles@2
+            displayName: 'Copy Files'
+            inputs:
+              SourceFolder: '$(Build.SourceDirectory)/source/bin/Release/net8.0/'
+              Contents: '**'
+              TargetFolder: '$(Build.SourceDirectory)/Setup'
+              OverWrite: true
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: '$(Build.SourceDirectory)/Setup'
+              artifact: 'Setup'
+              publishLocation: 'pipeline'
+
+
+    - job: SnykCheck
+      displayName: Snykverification
+    
