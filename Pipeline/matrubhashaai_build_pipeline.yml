@@ -32,7 +32,6 @@ jobs:
             displayName: 'Matrubhasha build'
             inputs:
               solution: '*/MatrubhashaAI.sln'
-              platform: 'x86'
               configuration: 'Release'
 
           - task: PowerShell@2
