@@ -14,7 +14,13 @@ jobs:
       displayName: Build Application
       steps:
           - checkout: self
-            lfs: true
+
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: |
+                cd "$(Build.Sourcedirectory)/source"
+                ls
           - task: NuGetCommand@2
             displayName: Nuget restore
             inputs:
@@ -29,15 +35,10 @@ jobs:
               platform: 'x86'
               configuration: 'Release'
 
-          - task: PythonScript@0
-            displayName: 'Create Folder'
+          - task: PowerShell@2
             inputs:
-              scriptSource: 'inline'
-              script: |
-                import os
-                path = "$(Build.SourceDirectory)/Setup"
-                os.mkdir(path)
-              failOnStderr: true
+              targetType: 'inline'
+              script: 'mkdir $(Build.Sourcedirectory)/Setup'
 
           - task: CopyFiles@2
             displayName: 'Copy Files'
@@ -53,6 +54,4 @@ jobs:
               publishLocation: 'pipeline'
 
 
-    - job: SnykCheck
-      displayName: Snykverification
     
