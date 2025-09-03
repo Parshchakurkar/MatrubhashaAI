@@ -25,7 +25,7 @@ jobs:
             displayName: Nuget restore
             inputs:
               command: 'restore'
-              restoreSolution: '$(Build.SourceDirectory)/source/MatrubhashaAI.sln'
+              restoreSolution: '*/MatrubhashaAI.sln'
               feedsToUse: 'config'
           
           - task: VSBuild@1
