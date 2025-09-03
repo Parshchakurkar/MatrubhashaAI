@@ -27,11 +27,11 @@ jobs:
               command: 'restore'
               restoreSolution: '$(Build.SourceDirectory)/source/MatrubhashaAI.sln'
               feedsToUse: 'config'
-
+          
           - task: VSBuild@1
             displayName: 'Matrubhasha build'
             inputs:
-              solution: '$(Build.SourceDirectory)/source/MatrubhashaAI.sln'
+              solution: '*/MatrubhashaAI.sln'
               platform: 'x86'
               configuration: 'Release'
 
