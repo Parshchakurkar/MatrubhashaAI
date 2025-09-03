@@ -1,7 +1,7 @@
 #Developer : Prashant Chakurkar
 # date: 03/09/2025
 
-name: $(Build.DefinitionName)_$(Build.SourceBranchName)_1.0.0.($rev:rrrr)
+name: $(Build.DefinitionName)_$(Build.SourceBranchName)_1.0.0.$(rev:rrrr)
 
 #variables:
 
@@ -19,7 +19,7 @@ jobs:
             inputs:
               targetType: 'inline'
               script: |
-                cd "$(Build.Sourcedirectory)/source"
+                cd "$env:BUILD_SOURCESDIRECTORY/source"
                 ls
           - task: NuGetCommand@2
             displayName: Nuget restore
@@ -38,7 +38,7 @@ jobs:
           - task: PowerShell@2
             inputs:
               targetType: 'inline'
-              script: 'mkdir $(Build.Sourcedirectory)/Setup'
+              script: 'mkdir $env:BUILD_SOURCESDIRECTORY/Setup'
 
           - task: CopyFiles@2
             displayName: 'Copy Files'
