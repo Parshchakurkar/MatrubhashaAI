@@ -3,57 +3,50 @@
 
 name: $(Build.DefinitionName)_$(Build.SourceBranchName)_1.0.0.$(rev:rrrr)
 
-#variables:
-
-
+variables:
+  configuration : "Release"
+  solutionpath: '$(Build.SourcesDirectory)/source/MatrubhashaAI.sln'
+  
 pool:
-    vmImage: windows-latest
+  vmImage: windows-latest
 
 jobs:
-    - job: Build
-      displayName: Build Application
-      steps:
-          - checkout: self
+  - job: Build
+    displayName: Build Application
+    steps:
+      - checkout: self
 
-          - task: NuGetCommand@2
-            displayName: Nuget restore
-            inputs:
-              command: 'restore'
-              restoreSolution: '*/MatrubhashaAI.sln'
-              feedsToUse: 'config'
-          
-          - task: VSBuild@1
-            displayName: 'Matrubhasha build'
-            inputs:
-              solution: '*/MatrubhashaAI.sln'
-              configuration: 'Release'
+      - task: NuGetCommand@2
+        displayName: Nuget restore
+        inputs:
+          command: "restore"
+          restoreSolution: '$(solutionpath)'
+          feedsToUse: "config"
 
-          - task: PowerShell@2
-            inputs:
-              targetType: 'inline'
-              script: 'mkdir $env:BUILD_SOURCESDIRECTORY/Setup'
-          - task: PowerShell@2
-            inputs:
-              targetType: 'inline'
-              script: |
-                cd "$env:BUILD_SOURCESDIRECTORY/source/bin/Release/net8.0/"
-                ls
+      - task: VSBuild@1
+        displayName: "Matrubhasha build"
+        inputs:
+          solution: '$(solutionpath)'
+          configuration: $(configuration)
 
-          - task: CopyFiles@2
-            displayName: 'Copy Files'
-            inputs:
-              SourceFolder: '$(Build.SourcesDirectory)/source/bin/Release/net8.0/'
-              Contents: |
-                MatrubhashaAI.exe 
-                MatrubhashaAI.dll
-              TargetFolder: '$(Build.SourcesDirectory)/Setup'
-              OverWrite: true
+      - task: PowerShell@2
+        displayName: "Folder Creation"
+        inputs:
+          targetType: "inline"
+          script: "mkdir $env:BUILD_SOURCESDIRECTORY/Setup"
 
-          - task: PublishPipelineArtifact@1
-            inputs:
-              targetPath: '$(Build.SourcesDirectory)/Setup'
-              artifact: 'Setup'
-              publishLocation: 'pipeline'
+      - task: CopyFiles@2
+        displayName: "Copy Files"
+        inputs:
+          SourceFolder: "$(Build.SourcesDirectory)/source/bin/$(configuration)/net8.0/"
+          Contents: |
+            MatrubhashaAI.exe 
+            MatrubhashaAI.dll
+          TargetFolder: "$(Build.SourcesDirectory)/Setup"
+          OverWrite: true
 
-
-    
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: "$(Build.SourcesDirectory)/Setup"
+          artifact: "Setup"
+          publishLocation: "pipeline"
