@@ -15,12 +15,6 @@ jobs:
       steps:
           - checkout: self
 
-          - task: PowerShell@2
-            inputs:
-              targetType: 'inline'
-              script: |
-                cd "$env:BUILD_SOURCESDIRECTORY/source"
-                ls
           - task: NuGetCommand@2
             displayName: Nuget restore
             inputs:
@@ -38,6 +32,12 @@ jobs:
             inputs:
               targetType: 'inline'
               script: 'mkdir $env:BUILD_SOURCESDIRECTORY/Setup'
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: |
+                cd "$env:BUILD_SOURCESDIRECTORY/source/bin/Release/net8.0/"
+                ls
 
           - task: CopyFiles@2
             displayName: 'Copy Files'
@@ -46,6 +46,7 @@ jobs:
               Contents: '**'
               TargetFolder: "$(Build.SourceDirectory)/Setup"
               OverWrite: true
+
           - task: PublishPipelineArtifact@1
             inputs:
               targetPath: "$(Build.SourceDirectory)/Setup"
