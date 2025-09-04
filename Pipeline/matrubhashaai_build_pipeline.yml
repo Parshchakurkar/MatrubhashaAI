@@ -42,14 +42,16 @@ jobs:
           - task: CopyFiles@2
             displayName: 'Copy Files'
             inputs:
-              SourceFolder: "$(Build.SourceDirectory)/source/bin/Release/net8.0/"
-              Contents: '**'
-              TargetFolder: "$(Build.SourceDirectory)/Setup"
+              SourceFolder: $(Build.SourceDirectory)/source/bin/Release/net8.0/
+              Contents: |
+                MatrubhashaAI.exe 
+                MatrubhashaAI.dll
+              TargetFolder: $(Build.SourceDirectory)/Setup
               OverWrite: true
 
           - task: PublishPipelineArtifact@1
             inputs:
-              targetPath: "$(Build.SourceDirectory)/Setup"
+              targetPath: $(Build.SourceDirectory)/Setup
               artifact: 'Setup'
               publishLocation: 'pipeline'
 
