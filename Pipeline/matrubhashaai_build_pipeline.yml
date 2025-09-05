@@ -1,0 +1,50 @@
+#Developer : Prashant Chakurkar
+# date: 03/09/2025
+
+name: $(Build.DefinitionName)_$(Build.SourceBranchName)_1.0.0.$(rev:rrrr)
+
+variables:
+  configuration : "Release"
+  solutionpath: '$(Build.SourcesDirectory)/source/MatrubhashaAI.sln'
+  
+pool:
+  vmImage: windows-latest
+
+jobs:
+  - job: BuildAndPublish
+    displayName: Build And Publish Application
+    steps:
+      - checkout: self
+
+      - task: NuGetCommand@2
+        displayName: Nuget restore
+        inputs:
+          command: "restore"
+          restoreSolution: '$(solutionpath)'
+          feedsToUse: "config"
+
+      - task: VSBuild@1
+        displayName: "Matrubhasha build"
+        inputs:
+          solution: '$(solutionpath)'
+          configuration: $(configuration)
+
+      - task: PowerShell@2
+        displayName: "Folder Creation"
+        inputs:
+          targetType: "inline"
+          script: "mkdir $env:BUILD_SOURCESDIRECTORY/Setup"
+
+      - task: CopyFiles@2
+        displayName: "Copy Files"
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)/source/bin/$(configuration)/net8.0/'
+          Contents: '**'
+          TargetFolder: '$(Build.SourcesDirectory)/Setup'
+          OverWrite: true
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: "$(Build.SourcesDirectory)/Setup"
+          artifact: "Setup"
+          publishLocation: "pipeline"
