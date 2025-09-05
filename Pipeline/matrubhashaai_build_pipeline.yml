@@ -11,8 +11,8 @@ pool:
   vmImage: windows-latest
 
 jobs:
-  - job: Build
-    displayName: Build Application
+  - job: BuildAndPublish
+    displayName: Build And Publish Application
     steps:
       - checkout: self
 
@@ -38,11 +38,9 @@ jobs:
       - task: CopyFiles@2
         displayName: "Copy Files"
         inputs:
-          SourceFolder: "$(Build.SourcesDirectory)/source/bin/$(configuration)/net8.0/"
-          Contents: |
-            MatrubhashaAI.exe 
-            MatrubhashaAI.dll
-          TargetFolder: "$(Build.SourcesDirectory)/Setup"
+          SourceFolder: '$(Build.SourcesDirectory)/source/bin/$(configuration)/net8.0/'
+          Contents: '**'
+          TargetFolder: '$(Build.SourcesDirectory)/Setup'
           OverWrite: true
 
       - task: PublishPipelineArtifact@1
