@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: matrubhashaai
-        image: parshchakurkar/matrubhashaai:1.0.3
+        image: matrubhashaaiacr.azurecr.io/matrubhashaai:312
         ports:
         - containerPort: 5000
         resources:

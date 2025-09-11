@@ -24,3 +24,15 @@ It is created inside the source location.
 
 ## Kubernetes:
 - Deployment of the application in cluster.
+- Created Public ip for ingress
+- followed below steps:
+    -  Create a namespace for your ingress resources
+        kubectl create namespace ingress-basic
+
+    -  Add the official stable repository
+      helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+      helm repo add stable https://charts.helm.sh/stable
+      helm repo update
+    - Used Helm to deploy an NGINX ingress controller
+    - Used [valid kube tool](https://validkube.com/) to validate and scan k8s manifest
+    - created a private IP in node pool resource grop, and assigned it to the nginx service(installed using helm)
