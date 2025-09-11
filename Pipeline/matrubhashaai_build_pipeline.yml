@@ -3,6 +3,17 @@
 
 name: $(Build.DefinitionName)_$(Build.SourceBranchName)_1.0.0.$(rev:rrrr)
 
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - 'source'
+      - 'Pipeline/matrubhashaai_build_pipeline.yml'
+    exclude:
+      - 'source/DockerFile'
+
 variables:
   configuration : "Release"
   solutionpath: '$(Build.SourcesDirectory)/source/MatrubhashaAI.sln'

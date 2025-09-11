@@ -6,6 +6,7 @@ pr:
   paths:
     include: 
       - 'source/DockerFile'
+      - 'Pipeline/pushdockerimagetoACR.Build.yml'
 
 
 variables: 
