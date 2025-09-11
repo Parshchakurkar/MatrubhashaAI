@@ -15,8 +15,6 @@ pool:
 
 variables:
   - group : Terraform-varibales
-  - name: isMain
-    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
   - name: serviceConnection 
     value: matrubhashaai_project
   - name: terraformFolder 
@@ -71,6 +69,7 @@ jobs:
 
       - task: TerraformTask@5
         displayName: Terraform Apply
+        condition: startswith(variables['Build.SourceBranch'], 'ref/heads/main')
         inputs:
           provider: 'azurerm'
           command: 'apply'
