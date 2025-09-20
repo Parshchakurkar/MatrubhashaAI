@@ -68,6 +68,23 @@ jobs:
           environmentServiceNameAzureRM: '$(serviceConnection)'
         
 
+  - job: Manualvalidation
+    displayName: Manual validation
+    pool: server
+    steps:
+      - task: ManualValidation@1
+        displayName: manualvalidation
+        condition: startswith(variables['Build.SourceBranch'], 'ref/heads/main')
+        inputs:
+          notifyUsers: 'parshchakurkar@gmail.com'
+          approvers: 'parshchakurkar@gmail.com'
+          instructions: 'review and approve'
+          
+  - job: TerraformApply
+    displayName: Terraform Apply
+    steps:
+      - checkout: self
+        lfs: true
       - task: TerraformTask@5
         displayName: Terraform Apply
         condition: startswith(variables['Build.SourceBranch'], 'ref/heads/main')
