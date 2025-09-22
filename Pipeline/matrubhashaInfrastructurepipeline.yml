@@ -41,7 +41,7 @@ jobs:
             ls
       
       - task: TerraformTask@5
-        displayName: Terrafor init
+        displayName: Terraform init
         inputs:
           provider: 'azurerm'
           command: 'init'
@@ -69,12 +69,13 @@ jobs:
         
 
   - job: Manualvalidation
-    displayName: Manual validation
+    displayName: Manual validation approval
+    dependsOn: Terraformresourcecreation
     pool: server
     steps:
       - task: ManualValidation@1
         displayName: manualvalidation
-        condition: startswith(variables['Build.SourceBranch'], 'ref/heads/main')
+        #condition: startswith(variables['Build.SourceBranch'], 'ref/heads/main')
         inputs:
           notifyUsers: 'parshchakurkar@gmail.com'
           approvers: 'parshchakurkar@gmail.com'
@@ -82,12 +83,27 @@ jobs:
           
   - job: TerraformApply
     displayName: Terraform Apply
+    dependsOn: Manualvalidation
     steps:
       - checkout: self
         lfs: true
+      - task: TerraformInstaller@1
+        displayName: Install Terraform
+        inputs:
+          terraformVersion: 'latest'
+      - task: TerraformTask@5
+        displayName: Terraform init
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          workingDirectory: '$(terraformFolder)'
+          backendServiceArm: '$(serviceConnection)'
+          backendAzureRmStorageAccountName: 'matrubhashaai'
+          backendAzureRmContainerName: 'terraform'
+          backendAzureRmKey: 'terraform.tfstate'
       - task: TerraformTask@5
         displayName: Terraform Apply
-        condition: startswith(variables['Build.SourceBranch'], 'ref/heads/main')
+        #condition: eq(variables['Build.SourceBranch'], 'ref/heads/main')
         inputs:
           provider: 'azurerm'
           command: 'apply'
