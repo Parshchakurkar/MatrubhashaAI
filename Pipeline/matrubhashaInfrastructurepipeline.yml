@@ -87,7 +87,7 @@ jobs:
         lfs: true
       - task: TerraformTask@5
         displayName: Terraform Apply
-        condition: startswith(variables['Build.SourceBranch'], 'ref/heads/main')
+        #condition: eq(variables['Build.SourceBranch'], 'ref/heads/main')
         inputs:
           provider: 'azurerm'
           command: 'apply'
