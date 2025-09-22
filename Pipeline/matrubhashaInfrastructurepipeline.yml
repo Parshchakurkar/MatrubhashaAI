@@ -69,7 +69,8 @@ jobs:
         
 
   - job: Manualvalidation
-    displayName: Manual validation
+    displayName: Manual validation approval
+    dependsOn: Terraformresourcecreation
     pool: server
     steps:
       - task: ManualValidation@1
@@ -82,6 +83,7 @@ jobs:
           
   - job: TerraformApply
     displayName: Terraform Apply
+    dependsOn: Manualvalidation
     steps:
       - checkout: self
         lfs: true
