@@ -32,6 +32,18 @@ jobs:
         dockerFile: 'source/DockerFile'
         imageName: 'matrubhashaai:$(Build.BuildId)'
 
+    - task: SnykSecurityScan@1
+      displayName: scan the image
+      inputs:
+        serviceConnectionEndpoint: 'snyk-connection'
+        testType: 'container'
+        dockerImageName: 'matrubhashaai:$(Build.BuildId)'
+        dockerfilePath: 'source/DockerFile'
+        monitorWhen: 'always'
+        failOnIssues: true
+        projectName: 'parshchakurkar/MatrubhashaAI'
+        organization: 'parshchakurkar'
+
 # push only when there is trigger from main branch
     - task: Docker@1
       displayName: Docker image push
