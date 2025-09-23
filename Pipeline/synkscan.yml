@@ -39,7 +39,7 @@ jobs:
       
       - task: SnykSecurityScan@1
         displayName: "Snyk OSS Scan"
-        condition: startswith(variables['Build.SourceBranch'], 'ref/heads/main')
+        #condition: -eq(variables['Build.SourceBranch'], 'ref/heads/main')
         inputs:
           serviceConnectionEndpoint: '$(snykServiceConnection)'
           testType: 'app'
@@ -51,7 +51,7 @@ jobs:
 
       - task: SnykSecurityScan@1
         displayName: "Snyk Code Scan"
-        condition: startswith(variables['Build.SourceBranch'], 'ref/heads/main')
+        #condition: -eq(variables['Build.SourceBranch'], 'ref/heads/main')
         inputs:
           serviceConnectionEndpoint: '$(snykServiceConnection)'
           testType: 'code'
