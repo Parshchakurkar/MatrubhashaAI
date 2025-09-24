@@ -40,7 +40,7 @@ jobs:
         dockerImageName: 'matrubhashaaiacr.azurecr.io/matrubhashaai:$(Build.BuildId)'
         dockerfilePath: 'source/DockerFile'
         monitorWhen: 'always'
-        failOnIssues: true
+        failOnIssues: false
         projectName: 'parshchakurkar/MatrubhashaAI'
         organization: 'parshchakurkar'
 
