@@ -20,10 +20,42 @@ variables:
     value: matrubhashaai_project
   - name: terraformFolder 
     value: '$(Build.SourcesDirectory)/terraform/cluster creation'
+  - name: isMain
+    value: $[eq(variables['Build.SourceBranch'], 'ref/heads/main')]
 
 jobs:
+  - job: ScanIAC
+    displayName: Scan IAC
+    steps:
+      - checkout: self
+      - task: Bash@3
+        displayName: 'Install Snyk'
+        inputs:
+          targetType: 'inline'
+          script: |
+            npm install -g snyk
+
+      - task: Bash@3
+        displayName: 'Authenticate Snyk'
+        inputs:
+          targetType: 'inline'
+          script: 'snyk auth $(SNYK_TOKEN)'
+          workingDirectory: '$(terraformFolder)'
+        env:
+          SNYK_TOKEN: $(SNYK_TOKEN)
+
+      - task: Bash@3
+        displayName: 'Snyk Test on Terraform modules'
+        inputs:
+          targetType: 'inline'
+          script: 'snyk iac test $(SNYK_TOKEN)'
+          workingDirectory: '$(terraformFolder)'
+        env:
+          SNYK_TOKEN: $(SNYK_TOKEN)
+
   - job: Terraformresourcecreation
     displayName: Terraform Resource Creation
+    dependsOn: ScanIAC
     steps:
       - checkout: self
         lfs: true
@@ -32,16 +64,9 @@ jobs:
         displayName: Install Terraform
         inputs:
           terraformVersion: 'latest'
-      
-      - task: PowerShell@2
-        inputs:
-          targetType: 'inline'
-          script: |
-            cd '$(terraformFolder)'
-            ls
-      
+
       - task: TerraformTask@5
-        displayName: Terrafor init
+        displayName: Terraform init
         inputs:
           provider: 'azurerm'
           command: 'init'
@@ -68,9 +93,42 @@ jobs:
           environmentServiceNameAzureRM: '$(serviceConnection)'
         
 
+  - job: Manualvalidation
+    displayName: Manual validation approval
+    dependsOn: Terraformresourcecreation
+    pool: server
+    steps:
+      - task: ManualValidation@1
+        displayName: manualvalidation
+        condition: and(succeeded(),eq(variables.isMain, true)) 
+        inputs:
+          notifyUsers: 'parshchakurkar@gmail.com'
+          approvers: 'parshchakurkar@gmail.com'
+          instructions: 'review and approve'
+          
+  - job: TerraformApply
+    displayName: Terraform Apply
+    dependsOn: Manualvalidation
+    steps:
+      - checkout: self
+        lfs: true
+      - task: TerraformInstaller@1
+        displayName: Install Terraform
+        inputs:
+          terraformVersion: 'latest'
+      - task: TerraformTask@5
+        displayName: Terraform init
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          workingDirectory: '$(terraformFolder)'
+          backendServiceArm: '$(serviceConnection)'
+          backendAzureRmStorageAccountName: 'matrubhashaai'
+          backendAzureRmContainerName: 'terraform'
+          backendAzureRmKey: 'terraform.tfstate'
       - task: TerraformTask@5
         displayName: Terraform Apply
-        condition: startswith(variables['Build.SourceBranch'], 'ref/heads/main')
+        condition: and(succeeded(),eq(variables.isMain, true)) 
         inputs:
           provider: 'azurerm'
           command: 'apply'

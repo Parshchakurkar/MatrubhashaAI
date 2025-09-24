@@ -16,6 +16,7 @@ resource "azurerm_kubernetes_cluster" "matrubhashaaicluster" {
   identity {
     type = "SystemAssigned"
   }
+  
 }
 
 resource "azurerm_container_registry" "matrubhashaaiacr" {
@@ -25,4 +26,10 @@ resource "azurerm_container_registry" "matrubhashaaiacr" {
   sku                 = "Basic"
   admin_enabled       = "false"
 
+}
+
+resource "azurerm_role_assignment" "aksacr" {
+  principal_id = azurerm_kubernetes_cluster.matrubhashaaicluster.kubelet_identity[0].object_id
+  scope = azurerm_container_registry.matrubhashaaiacr.id
+  role_definition_name = "AcrPull"
 }

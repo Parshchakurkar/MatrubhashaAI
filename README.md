@@ -5,7 +5,6 @@ CI:
 <img width="1186" height="604" alt="Screenshot 2025-09-11 at 5 17 39 PM" src="https://github.com/user-attachments/assets/77204d09-3d45-4677-97b5-89062dca9889" />
 
 
-
 ## Prerequisite:
 1. Resource group with name matrubhashaai-rg in central india
 2. Storage account with name 'matrubhashaai'
@@ -15,13 +14,29 @@ CI:
   - Storage Blob Data Contributor
   - Storage Queue Data Contributor
 
+## Pipeline
+### Build pipeline:
+- In case of any changes in sources folder build pipeline will run.
+- Build pipeline has stages as below
+    - build
+    - scan with snyk (OSS and code)
+    - docker build
+    - docker image scan with snyk
+    - publish
+
+### Infrastructure
+  - After above prequisite done, trigger the pipeline
+  - .tfstate file will be stored in storage account
+  - Before apply the chnages there is manual approval so that changes will get reviewed before actual apply in azure
+
 ## Dockerfile:
 It is created inside the source location.
 - run ```Docker build -t matrubhashaai:1.0.0 .``` command in source location
 
 ## Terraform:
 - Terraform used to create the private/ Self hosted agent in linux machine.
-- 
+- Creating the AKS and ACR using terraform
+- using snyk to scan the IAC files
 
 ## Kubernetes:
 - Deployment of the application in cluster.
