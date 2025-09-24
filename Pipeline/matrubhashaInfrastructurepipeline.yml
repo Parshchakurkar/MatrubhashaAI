@@ -39,9 +39,8 @@ jobs:
         displayName: 'Authenticate Snyk'
         inputs:
           targetType: 'inline'
-          script: |
-            snyk auth $(SNYK_TOKEN)
-            workingDirectory: '$(terraformFolder)'
+          script: 'snyk auth $(SNYK_TOKEN)'
+          workingDirectory: '$(terraformFolder)'
         env:
           SNYK_TOKEN: $(SNYK_TOKEN)
 
@@ -56,6 +55,7 @@ jobs:
 
   - job: Terraformresourcecreation
     displayName: Terraform Resource Creation
+    dependsOn: ScanIAC
     steps:
       - checkout: self
         lfs: true
