@@ -5,7 +5,6 @@ CI:
 <img width="1186" height="604" alt="Screenshot 2025-09-11 at 5 17 39 PM" src="https://github.com/user-attachments/assets/77204d09-3d45-4677-97b5-89062dca9889" />
 
 
-
 ## Prerequisite:
 1. Resource group with name matrubhashaai-rg in central india
 2. Storage account with name 'matrubhashaai'
@@ -21,7 +20,8 @@ It is created inside the source location.
 
 ## Terraform:
 - Terraform used to create the private/ Self hosted agent in linux machine.
-- 
+- Creating the AKS and ACR using terraform
+- using snyk to scan the IAC files
 
 ## Kubernetes:
 - Deployment of the application in cluster.

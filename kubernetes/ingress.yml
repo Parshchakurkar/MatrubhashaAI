@@ -15,14 +15,5 @@ spec:
               name: matrubhashaai-service
               port: 
                 number: 80
-        
-        - path: 
-          pathType:
-          backend:
-            service:
-              name:
-              port:
-                number:
-            
 
         
