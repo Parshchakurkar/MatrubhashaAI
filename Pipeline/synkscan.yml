@@ -15,6 +15,8 @@ variables:
     value: 'Parshchakurkar/MatrubhashaAI'
   - name: snykOrg 
     value: 'parshchakurkar' 
+  - name: isMain
+    value: $[eq(variables['Build.SourceBranch'], 'ref/heads/main')]
   - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/main') }}:
       - name: SnykMonitor
         value: 'always'
@@ -51,7 +53,7 @@ jobs:
 
       - task: SnykSecurityScan@1
         displayName: "Snyk Code Scan"
-        #condition: -eq(variables['Build.SourceBranch'], 'ref/heads/main')
+        condition: and(succeeded(),eq(variables.isMain, 'true'))
         inputs:
           serviceConnectionEndpoint: '$(snykServiceConnection)'
           testType: 'code'
