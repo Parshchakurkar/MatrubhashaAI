@@ -20,6 +20,8 @@ variables:
     value: matrubhashaai_project
   - name: terraformFolder 
     value: '$(Build.SourcesDirectory)/terraform/cluster creation'
+  - name: isMain
+    value: $[eq(variables['Build.SourceBranch'], 'ref/heads/main')]
 
 jobs:
   - job: ScanIAC
@@ -47,7 +49,7 @@ jobs:
         inputs:
           targetType: 'inline'
           script: |
-            cd terraform
+            cd $(terraformFolder)
             snyk iac test $(SNYK_TOKEN)
         env:
           SNYK_TOKEN: $(SNYK_TOKEN)
@@ -62,7 +64,6 @@ jobs:
         displayName: Install Terraform
         inputs:
           terraformVersion: 'latest'
-
 
       - task: TerraformTask@5
         displayName: Terraform init
@@ -99,7 +100,7 @@ jobs:
     steps:
       - task: ManualValidation@1
         displayName: manualvalidation
-        #condition: startswith(variables['Build.SourceBranch'], 'ref/heads/main')
+        condition: and(succeeded(),eq(variables.isMain, true)) 
         inputs:
           notifyUsers: 'parshchakurkar@gmail.com'
           approvers: 'parshchakurkar@gmail.com'
@@ -127,7 +128,7 @@ jobs:
           backendAzureRmKey: 'terraform.tfstate'
       - task: TerraformTask@5
         displayName: Terraform Apply
-        #condition: eq(variables['Build.SourceBranch'], 'ref/heads/main')
+        condition: and(succeeded(),eq(variables.isMain, true)) 
         inputs:
           provider: 'azurerm'
           command: 'apply'
