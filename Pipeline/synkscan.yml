@@ -1,63 +1,14 @@
-name: $(Build.DefinitionName)_$(Build.SourceBranchName)_$(date:yyyyMMdd)$(rev:.rrrr)
+# name: $(Build.DefinitionName)_$(Build.SourceBranchName)_$(date:yyyyMMdd)$(rev:.rrrr)
 
-trigger:
-  branches:
-    include:
-      - main
+# trigger:
+#   branches:
+#     include:
+#       - main
 
-pool:
-  vmImage: windows-latest
+# pool:
+#   vmImage: windows-latest
 
-variables:
-  - name: snykServiceConnection
-    value: snyk-connection
-  - name: snykProjectName
-    value: 'Parshchakurkar/MatrubhashaAI'
-  - name: snykOrg 
-    value: 'parshchakurkar' 
-  - name: isMain
-    value: $[eq(variables['Build.SourceBranch'], 'ref/heads/main')]
-  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/main') }}:
-      - name: SnykMonitor
-        value: 'always'
-  - ${{ else }}:
-      - name: SnykMonitor
-        value: 'never'
+# variables:
   
-
-jobs:
-  - job: SnykScan
-    displayName: 'Snyk Scan'
-    steps:
-      - checkout: self
-
-      - task: NuGetCommand@2
-        displayName: 'Nuget Restore'
-        inputs:
-          command: 'restore'
-          restoreSolution: '$(Build.SourcesDirectory)/source/MatrubhashaAI.sln'
-          feedsToUse: 'select'
-          vstsFeed: 'fb72fbac-d94e-45b7-96d4-7f2990641340'
-      
-      - task: SnykSecurityScan@1
-        displayName: "Snyk OSS Scan"
-        #condition: -eq(variables['Build.SourceBranch'], 'ref/heads/main')
-        inputs:
-          serviceConnectionEndpoint: '$(snykServiceConnection)'
-          testType: 'app'
-          monitorWhen: '$(SnykMonitor)'
-          failOnIssues: false
-          organization: '$(snykOrg)'
-          additionalArguments: '--all-projects --target-reference=$(snykProjectName) --exclude="kubernetes","terraform","cluster creation","vmCreation","Pipeline"'
-          failOnThreshold: 'critical'
-
-      - task: SnykSecurityScan@1
-        displayName: "Snyk Code Scan"
-        condition: and(succeeded(),eq(variables.isMain, 'true'))
-        inputs:
-          serviceConnectionEndpoint: '$(snykServiceConnection)'
-          testType: 'code'
-          failOnIssues: false
-          organization: '$(snykOrg)'
-          failOnThreshold: 'high'
-          monitorWhen: '$(SnykMonitor)'
+# jobs:
+  
