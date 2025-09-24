@@ -10,9 +10,7 @@ pr:
 
 
 variables: 
-  serviceConnection : matrubhashaai_project
-  ACRname: matrubhashaaiacr
-  AcrPrefix: matrubhashaaiacr.azurecr.io
+  
   isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
 
 pool:
