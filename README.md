@@ -2,7 +2,7 @@
 its an AI Application on a provider of blog link it will translate blog in the selected language
 # Project HLD:
 CI:
-<img width="1186" height="604" alt="Screenshot 2025-09-11 at 5 17 39 PM" src="https://github.com/user-attachments/assets/77204d09-3d45-4677-97b5-89062dca9889" />
+<img width="969" height="569" alt="Screenshot 2025-09-25 at 12 35 53 AM" src="https://github.com/user-attachments/assets/8d050e46-7c5f-4731-8e4b-744839eb6e75" />
 
 
 ## Prerequisite:
