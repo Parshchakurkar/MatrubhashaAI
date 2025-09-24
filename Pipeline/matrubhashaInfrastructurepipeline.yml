@@ -41,6 +41,7 @@ jobs:
           targetType: 'inline'
           script: |
             snyk auth $(SNYK_TOKEN)
+            workingDirectory: '$(terraformFolder)'
         env:
           SNYK_TOKEN: $(SNYK_TOKEN)
 
@@ -48,9 +49,8 @@ jobs:
         displayName: 'Snyk Test on Terraform modules'
         inputs:
           targetType: 'inline'
-          script: |
-            cd $(terraformFolder)
-            snyk iac test $(SNYK_TOKEN)
+          script: 'snyk iac test $(SNYK_TOKEN)'
+          workingDirectory: '$(terraformFolder)'
         env:
           SNYK_TOKEN: $(SNYK_TOKEN)
 
