@@ -11,18 +11,41 @@ trigger:
     include:
       - 'source'
       - 'Pipeline/matrubhashaai_build_pipeline.yml'
-    exclude:
-      - 'source/DockerFile'
 
 variables:
-  configuration : "Release"
-  solutionpath: '$(Build.SourcesDirectory)/source/MatrubhashaAI.sln'
+  - name: configuration 
+    value: "Release"
+  - name: solutionpath 
+    value: '$(Build.SourcesDirectory)/source/MatrubhashaAI.sln'
+  - name: snykServiceConnection
+    value: snyk-connection
+  - name: snykProjectName
+    value: 'Parshchakurkar/MatrubhashaAI'
+  - name: snykOrg 
+    value: 'parshchakurkar' 
+  - name: isMain
+    value: $[eq(variables['Build.SourceBranch'], 'ref/heads/main')]
+  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+      - name: SnykMonitor
+        value: 'always'
+  - ${{ else }}:
+      - name: SnykMonitor
+        value: 'never'
+
+  #Docker job variables
+  - name: serviceConnection 
+    value: matrubhashaai_project
+  - name: ACRname 
+    value: matrubhashaaiacr
+  - name: AcrPrefix
+    value: matrubhashaaiacr.azurecr.io
   
 pool:
   vmImage: windows-latest
 
 jobs:
-  - job: BuildAndPublish
+
+  - job: Build
     displayName: Build And Publish Application
     steps:
       - checkout: self
@@ -55,7 +78,84 @@ jobs:
           OverWrite: true
 
       - task: PublishPipelineArtifact@1
+        displayName: publishSetup
         inputs:
           targetPath: "$(Build.SourcesDirectory)/Setup"
           artifact: "Setup"
           publishLocation: "pipeline"
+
+  - job: SnykScan
+    displayName: 'Snyk Scan'
+    dependsOn: Build
+    steps:
+      - checkout: self
+
+      - task: NuGetCommand@2
+        displayName: 'Nuget Restore'
+        inputs:
+          command: 'restore'
+          restoreSolution: '$(Build.SourcesDirectory)/source/MatrubhashaAI.sln'
+          feedsToUse: 'select'
+          vstsFeed: 'fb72fbac-d94e-45b7-96d4-7f2990641340'
+      
+      - task: SnykSecurityScan@1
+        displayName: "Snyk OSS Scan"
+        condition: and(succeeded(),eq(variables.isMain, 'true'))
+        inputs:
+          serviceConnectionEndpoint: '$(snykServiceConnection)'
+          testType: 'app'
+          monitorWhen: '$(SnykMonitor)'
+          failOnIssues: false
+          organization: '$(snykOrg)'
+          additionalArguments: '--all-projects --target-reference=$(snykProjectName) --exclude="kubernetes","terraform","cluster creation","vmCreation","Pipeline"'
+          failOnThreshold: 'critical'
+
+      - task: SnykSecurityScan@1
+        displayName: "Snyk Code Scan"
+        condition: and(succeeded(),eq(variables.isMain, 'true'))
+        inputs:
+          serviceConnectionEndpoint: '$(snykServiceConnection)'
+          testType: 'code'
+          failOnIssues: false
+          organization: '$(snykOrg)'
+          failOnThreshold: 'high'
+          monitorWhen: '$(SnykMonitor)'
+
+  - job: BuildandpushImage
+    displayName: 'Create image from the Dockerfile'
+    dependsOn: SnykScan
+    steps:
+    - task: Docker@1
+      displayName: Dockerbuild
+      inputs:
+        containerregistrytype: 'Azure Container Registry'
+        azureSubscriptionEndpoint: '$(serviceConnection)'
+        azureContainerRegistry: '$(AcrPrefix)'
+        command: 'Build an image'
+        dockerFile: 'source/DockerFile'
+        imageName: 'matrubhashaai:$(Build.BuildId)'
+
+    - task: SnykSecurityScan@1
+      displayName: scan the image
+      inputs:
+        serviceConnectionEndpoint: 'snyk-connection'
+        testType: 'container'
+        dockerImageName: 'matrubhashaaiacr.azurecr.io/matrubhashaai:$(Build.BuildId)'
+        dockerfilePath: 'source/DockerFile'
+        monitorWhen: 'always'
+        failOnIssues: false
+        projectName: 'parshchakurkar/MatrubhashaAI'
+        organization: 'parshchakurkar'
+
+# push only when there is trigger from main branch
+    - task: Docker@1
+      displayName: Docker image push
+      condition: and(succeeded(),eq(variables.isMain, true)) 
+      inputs:
+        containerregistrytype: 'Azure Container Registry'
+        azureSubscriptionEndpoint: '$(serviceConnection)'
+        azureContainerRegistry: '$(AcrPrefix)'
+        command: 'Push an image'
+        imageName: 'matrubhashaai:$(Build.BuildId)'
+    
+          
