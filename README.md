@@ -14,6 +14,21 @@ CI:
   - Storage Blob Data Contributor
   - Storage Queue Data Contributor
 
+## Pipeline
+### Build pipeline:
+- In case of any changes in sources folder build pipeline will run.
+- Build pipeline has stages as below
+    - build
+    - scan with snyk (OSS and code)
+    - docker build
+    - docker image scan with snyk
+    - publish
+
+### Infrastructure
+  - After above prequisite done, trigger the pipeline
+  - .tfstate file will be stored in storage account
+  - Before apply the chnages there is manual approval so that changes will get reviewed before actual apply in azure
+
 ## Dockerfile:
 It is created inside the source location.
 - run ```Docker build -t matrubhashaai:1.0.0 .``` command in source location
