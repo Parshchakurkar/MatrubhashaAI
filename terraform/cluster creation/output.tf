@@ -1,3 +1,3 @@
 output "cluster-name" {
-  value = azurerm_kubernetes_cluster.matrubhashaaicluster.name
+  value = azurerm_kubernetes_cluster.matrubhashaai_cluster.name
 }
