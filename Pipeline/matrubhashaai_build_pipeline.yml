@@ -158,8 +158,8 @@ jobs:
         command: 'Push an image'
         imageName: 'matrubhashaai:$(Build.BuildId)'
   
-  - job: UpdateK8sArtifacts
-    displayName: Update kubernetes artifact
+  - job: GetImagetImageTag
+    displayName: Get Image Docker image tag
     dependsOn: BuildandpushImage
     steps:
       - checkout: none
