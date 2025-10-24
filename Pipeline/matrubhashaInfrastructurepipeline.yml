@@ -21,7 +21,7 @@ variables:
   - name: terraformFolder 
     value: '$(Build.SourcesDirectory)/terraform/cluster creation'
   - name: isMain
-    value: $[eq(variables['Build.SourceBranch'], 'ref/heads/main')]
+    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
 
 jobs:
   - job: ScanIAC
@@ -100,7 +100,7 @@ jobs:
     steps:
       - task: ManualValidation@1
         displayName: manualvalidation
-        condition: and(succeeded(),eq(variables.isMain, true)) 
+        condition: and(succeeded(),eq(variables.isMain, 'true')) 
         inputs:
           notifyUsers: 'parshchakurkar@gmail.com'
           approvers: 'parshchakurkar@gmail.com'
@@ -129,7 +129,7 @@ jobs:
           
       - task: TerraformTask@5
         displayName: Terraform Apply
-        condition: and(succeeded(),eq(variables.isMain, true)) 
+        condition: and(succeeded(),eq(variables.isMain, 'true'))
         inputs:
           provider: 'azurerm'
           command: 'apply'
