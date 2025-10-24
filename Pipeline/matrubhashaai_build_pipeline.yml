@@ -121,6 +121,7 @@ jobs:
           failOnThreshold: 'high'
           monitorWhen: '$(SnykMonitor)'
 
+# push and scan only when there is trigger from main branch
   - job: BuildandpushImage
     displayName: 'Create image from the Dockerfile'
     dependsOn: SnykScan
@@ -148,7 +149,6 @@ jobs:
         projectName: 'parshchakurkar/MatrubhashaAI'
         organization: 'parshchakurkar'
 
-# push only when there is trigger from main branch
     - task: Docker@1
       displayName: Docker image push 
       inputs:
@@ -157,5 +157,28 @@ jobs:
         azureContainerRegistry: '$(AcrPrefix)'
         command: 'Push an image'
         imageName: 'matrubhashaai:$(Build.BuildId)'
+  
+  - job: UpdateK8sArtifacts
+    displayName: Update kubernetes artifact
+    dependsOn: BuildandpushImage
+    steps:
+      - checkout: none
+      - task: PowerShell@2
+        displayName: Get Image Tag
+        inputs:
+          targetType: 'inline'
+          script: |
+            $tag = $env:Build_BuildId
+            $envValue | Out-File -FilePath tag.txt -Encoding UTF8
+          workingDirectory: '$(Build.SourcesDirectory)'
+        
+      - task: PublishPipelineArtifact@1
+        displayName: Publish Tag File
+        inputs:
+          targetPath: '$(Build.SourcesDirectory)/tag.txt'
+          artifact: 'tag'
+          publishLocation: 'pipeline'
+
+          
     
           
