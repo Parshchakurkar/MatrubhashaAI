@@ -126,14 +126,7 @@ jobs:
           backendAzureRmStorageAccountName: 'matrubhashaai'
           backendAzureRmContainerName: 'terraform'
           backendAzureRmKey: 'terraform.tfstate'
-      - task: TerraformTask@5
-        displayName: Terraform plan
-        inputs:
-          provider: 'azurerm'
-          command: 'plan'
-          workingDirectory: '$(terraformFolder)'
-          commandOptions: '-var subscription_id=$(subscriptionId)'
-          environmentServiceNameAzureRM: '$(serviceConnection)'
+          
       - task: TerraformTask@5
         displayName: Terraform Apply
         condition: and(succeeded(),eq(variables.isMain, true)) 
