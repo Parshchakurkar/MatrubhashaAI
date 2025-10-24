@@ -34,6 +34,12 @@ resource "azurerm_kubernetes_cluster" "matrubhashaai_cluster" {
   identity {
     type = "SystemAssigned"
   }
+  network_profile {
+    network_plugin = "azure"
+    service_cidr = "172.16.0.0/16"
+    dns_service_ip = "172.16.0.10"
+    network_policy = "azure"
+  }
 
 }
 
