@@ -124,6 +124,7 @@ jobs:
   - job: BuildandpushImage
     displayName: 'Create image from the Dockerfile'
     dependsOn: SnykScan
+    condition: and(succeeded(),eq(variables.isMain, true))
     steps:
     - task: Docker@1
       displayName: Dockerbuild
@@ -149,8 +150,7 @@ jobs:
 
 # push only when there is trigger from main branch
     - task: Docker@1
-      displayName: Docker image push
-      condition: and(succeeded(),eq(variables.isMain, true)) 
+      displayName: Docker image push 
       inputs:
         containerregistrytype: 'Azure Container Registry'
         azureSubscriptionEndpoint: '$(serviceConnection)'
