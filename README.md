@@ -13,6 +13,7 @@ CI:
 5. Service connection with below access on storage account:
   - Storage Blob Data Contributor
   - Storage Queue Data Contributor
+  - User Access Administrator role for Service account so that it can assign ACRPULL role to ACR and AKS
 
 ## Pipeline
 ### Build pipeline:
