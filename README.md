@@ -15,6 +15,12 @@ CI:
   - Storage Queue Data Contributor
   - User Access Administrator role for Service account so that it can assign ACRPULL role to ACR and AKS
 
+## az command to create resources
+1. With `az login` login to console and select required subscription
+2. `az group create --name matrubhashaai-rg --location centralindia` - create resource group
+3. `az storage account create --name matrubhashaai --resource-group matrubhashaai-rg  --location centralindia --sku Standard_LRS` - create storage account
+4. `az storage container create --name terraform --account-name matrubhashaai` - create container
+
 ## Pipeline
 ### Build pipeline:
 - In case of any changes in sources folder build pipeline will run.
@@ -39,6 +45,16 @@ It is created inside the source location.
 - Creating the AKS and ACR using terraform
 - using snyk to scan the IAC files
 
+# Helm package creation
+- use `helm create matrubhashaai ` and remove not required files and copy kubernetes files in template folder.
+- update chart and values file, use values in k8s files inside template.
+- run command `helm install matrubhashaai matrubhashaai` - run this inside helm folder.
+- check helm package ` helm lint matrubhashaai`
+- package `helm package matrubhashaai`
+-  ACR login `az acr login --name matrubhaaiacr`
+- to push `helm push matrubhashaai-0.1.0.tgz oci://matrubhashaaiacr.azurecr.io/helm`
+
+
 ## Kubernetes:
 - Deployment of the application in cluster.
 - Created Public ip for ingress
@@ -55,3 +71,8 @@ It is created inside the source location.
     - created a private IP in node pool resource grop, and assigned it to the nginx service(installed using helm)
     - Architecture:
 <img width="1235" height="595" alt="Screenshot 2025-09-11 at 2 28 13 PM" src="https://github.com/user-attachments/assets/9ca02e94-442d-40ad-8d58-96374577b4fa" />
+
+
+## ArgoCD
+- Use InstallArgoCD.sh script to run argocd, run it agter `az aks get-credential` command
+- 
