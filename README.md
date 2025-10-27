@@ -49,6 +49,10 @@ It is created inside the source location.
 - use `helm create matrubhashaai ` and remove not required files and copy kubernetes files in template folder.
 - update chart and values file, use values in k8s files inside template.
 - run command `helm install matrubhashaai matrubhashaai` - run this inside helm folder.
+- check helm package ` helm lint matrubhashaai`
+- package `helm package matrubhashaai`
+-  ACR login `az acr login --name matrubhaaiacr`
+- to push `helm push matrubhashaai-0.1.0.tgz oci://matrubhashaaiacr.azurecr.io/helm`
 
 
 ## Kubernetes:
