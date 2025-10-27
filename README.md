@@ -57,7 +57,7 @@ It is created inside the source location.
 
 ## Kubernetes:
 - Deployment of the application in cluster.
-- Created Public ip for ingress
+- Created Public ip for ingress, Assign this ip to agentpool resourcegroup
 - followed below steps:
     -  Create a namespace for your ingress resources
         kubectl create namespace ingress-basic
@@ -72,7 +72,13 @@ It is created inside the source location.
     - Architecture:
 <img width="1235" height="595" alt="Screenshot 2025-09-11 at 2 28 13 PM" src="https://github.com/user-attachments/assets/9ca02e94-442d-40ad-8d58-96374577b4fa" />
 
+## observibility
+### Prometheus and grafana
+- run InstallPrometheusGraphana.sh it will create prometheus and grafana services
+- use port forwording as mentioned in the script output and access portal
+- Access the local ports and start making changes.
 
+# Implemented gitOps concept
 ## ArgoCD
 - Use InstallArgoCD.sh script to run argocd, run it agter `az aks get-credential` command
 - login with user Admin and password you got from first password
@@ -80,3 +86,8 @@ It is created inside the source location.
 - get password of ACR `az acr credentials show -n matrubhashaaiacr`
 - provide user and password you will get out put from the above command.
 - Once done create app. Provide app name and details with repo path and head to version of the file, and create.
+
+
+## todo
+- Access argocd, prometheus and grafana as service
+- assign these services in ingress
