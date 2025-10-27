@@ -71,3 +71,8 @@ It is created inside the source location.
     - created a private IP in node pool resource grop, and assigned it to the nginx service(installed using helm)
     - Architecture:
 <img width="1235" height="595" alt="Screenshot 2025-09-11 at 2 28 13 PM" src="https://github.com/user-attachments/assets/9ca02e94-442d-40ad-8d58-96374577b4fa" />
+
+
+## ArgoCD
+- Use InstallArgoCD.sh script to run argocd, run it agter `az aks get-credential` command
+- 
