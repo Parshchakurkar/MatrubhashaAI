@@ -75,4 +75,8 @@ It is created inside the source location.
 
 ## ArgoCD
 - Use InstallArgoCD.sh script to run argocd, run it agter `az aks get-credential` command
-- 
+- login with user Admin and password you got from first password
+- add/ create repo with ACR , use type oci and repo path `oci://matrubhashaaiacr.azurecr.io/helm/matrubhashaai`
+- get password of ACR `az acr credentials show -n matrubhashaaiacr`
+- provide user and password you will get out put from the above command.
+- Once done create app. Provide app name and details with repo path and head to version of the file, and create.
