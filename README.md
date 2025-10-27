@@ -1,5 +1,9 @@
+
 # MatrubhashaAI
-its an AI Application on a provider of blog link it will translate blog in the selected language
+
+**MatrubhashaAI** is an AI-driven web application that translates blog content into user-selected languages.  
+The project demonstrates a complete **DevOps lifecycle** including CI/CD, Infrastructure as Code, Containerization, Observability, and GitOps using Azure and Kubernetes.
+
 # Project HLD:
 CI:
 <img width="969" height="569" alt="Screenshot 2025-09-25 at 12 35 53 AM" src="https://github.com/user-attachments/assets/8d050e46-7c5f-4731-8e4b-744839eb6e75" />
@@ -15,15 +19,15 @@ CI:
   - Storage Queue Data Contributor
   - User Access Administrator role for Service account so that it can assign ACRPULL role to ACR and AKS
 
-## az command to create resources
-1. With `az login` login to console and select required subscription
+## Azure CLI Commands to create resources (to setup things fast)
+1. `az login` login to console and select required subscription
 2. `az group create --name matrubhashaai-rg --location centralindia` - create resource group
 3. `az storage account create --name matrubhashaai --resource-group matrubhashaai-rg  --location centralindia --sku Standard_LRS` - create storage account
 4. `az storage container create --name terraform --account-name matrubhashaai` - create container
 
 ## Pipeline
 ### Build pipeline:
-- In case of any changes in sources folder build pipeline will run.
+- In case of any changes in `/sources` folder build pipeline will run.
 - Build pipeline has stages as below
     - build
     - scan with snyk (OSS and code)
@@ -31,14 +35,15 @@ CI:
     - docker image scan with snyk
     - publish
 
-### Infrastructure
+### Infrastructure as code
   - After above prequisite done, trigger the pipeline
   - .tfstate file will be stored in storage account
-  - Before apply the chnages there is manual approval so that changes will get reviewed before actual apply in azure
+  - Manual approval gate before terraform apply for controlled deployment.
 
 ## Dockerfile:
 It is created inside the source location.
-- run ```Docker build -t matrubhashaai:1.0.0 .``` command in source location
+- run ```Docker build -t matrubhashaai:1.0.0 .``` command in source location if want to create in local.
+- Build pipeline will create and push image to acr.
 
 ## Terraform:
 - Terraform used to create the private/ Self hosted agent in linux machine.
@@ -57,7 +62,7 @@ It is created inside the source location.
 
 ## Kubernetes:
 - Deployment of the application in cluster.
-- Created Public ip for ingress
+- Created Public ip for ingress, Assign this ip to agentpool resourcegroup
 - followed below steps:
     -  Create a namespace for your ingress resources
         kubectl create namespace ingress-basic
@@ -72,7 +77,13 @@ It is created inside the source location.
     - Architecture:
 <img width="1235" height="595" alt="Screenshot 2025-09-11 at 2 28 13 PM" src="https://github.com/user-attachments/assets/9ca02e94-442d-40ad-8d58-96374577b4fa" />
 
+## observibility
+### Prometheus and grafana
+- run InstallPrometheusGraphana.sh it will create prometheus and grafana services
+- use port forwording as mentioned in the script output and access portal
+- Access the local ports and start making changes.
 
+# Implemented gitOps concept
 ## ArgoCD
 - Use InstallArgoCD.sh script to run argocd, run it agter `az aks get-credential` command
 - login with user Admin and password you got from first password
@@ -80,3 +91,9 @@ It is created inside the source location.
 - get password of ACR `az acr credentials show -n matrubhashaaiacr`
 - provide user and password you will get out put from the above command.
 - Once done create app. Provide app name and details with repo path and head to version of the file, and create.
+
+
+## todo
+- Expose ArgoCD, Prometheus, and Grafana via Ingress.
+- Automate monitoring dashboard provisioning.
+- Add CI tests for Helm chart validation.
