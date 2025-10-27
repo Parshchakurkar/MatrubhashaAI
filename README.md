@@ -15,6 +15,12 @@ CI:
   - Storage Queue Data Contributor
   - User Access Administrator role for Service account so that it can assign ACRPULL role to ACR and AKS
 
+##AZ command to create resources
+1. With `az login` login to console and select required subscription
+2. `az group create --name matrubhashaai-rg --location centralindia` - create resource group
+3. `az storage account create --name matrubhashaai --resource-group matrubhashaai-rg  --location centralindia --sku Standard_LRS` - create storage account
+4. `az storage container create --name terraform --account-name matrubhashaai` - create container
+
 ## Pipeline
 ### Build pipeline:
 - In case of any changes in sources folder build pipeline will run.
@@ -38,6 +44,12 @@ It is created inside the source location.
 - Terraform used to create the private/ Self hosted agent in linux machine.
 - Creating the AKS and ACR using terraform
 - using snyk to scan the IAC files
+
+# Helm package creation
+- use `helm create matrubhashaai ` and remove not required files and copy kubernetes files in template folder.
+- update chart and values file, use values in k8s files inside template.
+- run command `helm install matrubhashaai matrubhashaai` - run this inside helm folder.
+
 
 ## Kubernetes:
 - Deployment of the application in cluster.

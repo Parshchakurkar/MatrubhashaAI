@@ -1,0 +1,7 @@
+replicaCount: 1
+
+image:
+  registry: matrubhashaaiacr.azurecr.io
+  image: matrubhashaai
+  tag: 384
+  
