@@ -31,7 +31,6 @@ ADMIN_PASS=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpat
 echo "============================================================"
 echo "Argo CD Initial Admin Password: $ADMIN_PASS"
 echo "============================================================"
-echo "============================================================"
 echo "Argo CD Initial User: admin"
 echo "============================================================"
 
