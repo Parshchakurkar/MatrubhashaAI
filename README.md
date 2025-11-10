@@ -5,8 +5,7 @@
 The project demonstrates a complete **DevOps lifecycle** including CI/CD, Infrastructure as Code, Containerization, Observability, and GitOps using Azure and Kubernetes.
 
 # Project HLD:
-CI:
-<img width="969" height="569" alt="Screenshot 2025-09-25 at 12 35 53 AM" src="https://github.com/user-attachments/assets/8d050e46-7c5f-4731-8e4b-744839eb6e75" />
+<img width="2406" height="1374" alt="image" src="https://github.com/user-attachments/assets/fb36513c-83d2-4735-8049-bc6ed6937694" />
 
 
 ## Prerequisite:
