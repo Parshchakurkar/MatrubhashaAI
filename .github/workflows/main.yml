@@ -12,7 +12,7 @@ jobs:
         run: |
           git config user.name "GitHub Sync Bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote add azure https://$(ADO_PAT)@dev.azure.com/ORG/PROJECT/_git/REPO
+          git remote add azure https://$(ADO_PAT)@dev.azure.com/parshchakurkar/MatrubhashaAI/_git/MatrubhashaAI
           git push --mirror azure
         env:
           ADO_PAT: ${{ secrets.ADO_PAT }}
