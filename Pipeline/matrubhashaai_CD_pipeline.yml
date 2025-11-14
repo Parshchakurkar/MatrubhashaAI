@@ -4,8 +4,31 @@ trigger: none
 pool:
   vmImage: windows-latest
 
+resources:
+  pipelines:
+    - pipeline: MatrubhashaAI_Build
+      source: MatrubhashaAI_Build
+      branch: main
 
 stages:
 - stage: Dev
   jobs:
-  - job: 
+  - job: UpdateVersionInHelm
+    displayName: Update Version In Helm
+    steps:
+      - download: MatrubhashaAI_Build
+        artifact: tag
+      
+      - task: pull git changes
+
+      - task: PowerShell@2
+        displayName: get version of images
+        inputs:
+          targetType: 'inline'
+          script: |
+            # Write your PowerShell commands here.
+            
+            Write-Host "Hello World"
+      
+      - task: update helm artifact with iamage versions
+      - task: push the changes to repo folder
