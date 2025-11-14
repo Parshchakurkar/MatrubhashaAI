@@ -25,5 +25,6 @@ jobs:
         run: |
           # Ensure main exists locally (in case default branch is master)
           git show-ref --verify --quiet refs/heads/main || { echo "Branch 'main' not found locally"; exit 1; }
+          git pull azure main  
           git push --force-with-lease azure main:main
 
