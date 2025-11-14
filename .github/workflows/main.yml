@@ -28,6 +28,3 @@ jobs:
           git config --global pull.rebase true
           git pull azure main  
           git push --force-with-lease azure main:main
-
-
-
