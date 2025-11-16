@@ -46,6 +46,7 @@ stages:
             $token = $env:GH_TOKEN
             $token | gh auth login --with-token 
             gh auth status
+            gh auth refresh -h github.com
         env:
           GITHUB_PAT: $(GitHubPAT) 
 
@@ -55,7 +56,8 @@ stages:
           targetType: 'inline'
           script: |
             $repoUrl = "$(GitHubRepoUrl)"  # Example: https://github.com/user/repo.git
-            $repoDir = "$(Build.SourcesDirectory)\githubrepo"
+            $repoDir = "$env:Build_SourcesDirectory\githubrepo"
+            ls "$(Build.SourcesDirectory)\githubrepo"
             if (Test-Path $repoDir) {
                 Write-Host "Repo already exists. Pulling updates..."
                 cd $repoDir
@@ -70,7 +72,7 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
-            $tagFile = "$(Build.Artifactstagging)\tag.txt"
+            $tagFile = "$env:Build_Artifactstagging\MatrubhashaAI_Build\tag\tag.txt"
             if (!(Test-Path $tagFile)) {
                 Write-Error "tag.txt not found!"
                 exit 1
@@ -85,7 +87,7 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
-            $repoDir = "$(Build.SourcesDirectory)\githubrepo"
+            $repoDir = "$env:Build_SourcesDirectory\githubrepo"
             $filePath = Join-Path $repoDir "helm/argocd/Dev/values.yaml"
             if (!(Test-Path $filePath)) {
                 Write-Error "values.yaml not found at: $filePath"
@@ -101,7 +103,7 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
-            $repoDir = "$(Build.SourcesDirectory)\githubrepo"
+            $repoDir = "$env:Build_SourcesDirectory\githubrepo"
             cd $repoDir
             $branchName = "update-tag-$(ReleaseVersion)-$(Get-Date -Format yyyyMMddHHmmss)"
             Write-Host "Creating branch: $branchName"
@@ -117,7 +119,7 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
-            $repoDir = "$(Build.SourcesDirectory)\githubrepo"
+            $repoDir = "$env:Build_SourcesDirectory\githubrepo"
             cd $repoDir
             $branchName = git branch --show-current
             gh pr create `
