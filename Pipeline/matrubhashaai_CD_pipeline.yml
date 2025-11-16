@@ -38,9 +38,10 @@ stages:
           script: |
             git config --global user.name "GitHub Sync Bot"
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
-            $env:GITHUB_TOKEN = "$(GitHubPAT)"
-            $token = "$(GitHubPAT)"
-            $token | gh auth login --with-token
+            $env:GH_TOKEN = "$(GITHUB_PAT)"
+            $env:GITHUB_TOKEN = "$(GITHUB_PAT)"
+            $token = "$(GITHUB_PAT)"
+            $token | gh auth login --with-token 
             gh auth status
         env:
           GITHUB_PAT: $(GitHubPAT) 
