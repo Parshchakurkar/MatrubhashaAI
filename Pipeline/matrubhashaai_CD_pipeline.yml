@@ -46,7 +46,6 @@ stages:
             $token = $env:GH_TOKEN
             $token | gh auth login --with-token 
             gh auth status
-            gh auth refresh -h github.com
         env:
           GITHUB_PAT: $(GitHubPAT) 
 
