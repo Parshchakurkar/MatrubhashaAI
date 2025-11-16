@@ -1,0 +1,11 @@
+name: MatrubhashaAI-CD-$(Date:yyyyMMdd)$(Rev:.r)
+
+trigger: none
+pool:
+  vmImage: windows-latest
+
+
+stages:
+- stage: Dev
+  jobs:
+  - job: 
