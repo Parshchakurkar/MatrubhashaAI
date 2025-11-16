@@ -55,6 +55,7 @@ stages:
           targetType: 'inline'
           script: |
             $repoUrl = "$(GitHubRepoUrl)"
+            git remote set-url origin $repoUrl
             cd $env:Build_SourcesDirectory
             mkdir githubrepo
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
