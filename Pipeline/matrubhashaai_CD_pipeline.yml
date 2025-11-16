@@ -23,7 +23,6 @@ stages:
       - download: MatrubhashaAI_Build
         artifact: tag
         displayName: Download the tag.txt
-        target: $env:Build_Artifactstagging
       
       - task: PowerShell@2
         displayName: Install Github CLI
@@ -72,7 +71,7 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
-            $tagFile = "$env:Build_Artifactstagging\MatrubhashaAI_Build\tag\tag.txt"
+            $tagFile = "$env:Pipeline_Workspace\MatrubhashaAI_Build\tag\tag.txt"
             if (!(Test-Path $tagFile)) {
                 Write-Error "tag.txt not found!"
                 exit 1
