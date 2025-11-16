@@ -23,6 +23,7 @@ stages:
       - download: MatrubhashaAI_Build
         artifact: tag
         displayName: Download the tag.txt
+        target: $env:Build_Artifactstagging
       
       - task: PowerShell@2
         displayName: Install Github CLI
