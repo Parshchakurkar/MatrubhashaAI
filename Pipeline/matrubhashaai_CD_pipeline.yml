@@ -54,7 +54,9 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
-            $repoUrl = "$(GitHubRepoUrl)"  # Example: https://github.com/user/repo.git
+            $repoUrl = "$(GitHubRepoUrl)"
+            cd $env:Build_SourcesDirectory
+            mkdir githubrepo
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
             ls "$(Build.SourcesDirectory)\githubrepo"
             if (Test-Path $repoDir) {
