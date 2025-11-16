@@ -19,16 +19,100 @@ stages:
       - download: MatrubhashaAI_Build
         artifact: tag
       
-      - task: pull git changes
-
       - task: PowerShell@2
-        displayName: get version of images
+        displayName: Install Github CLI
         inputs:
           targetType: 'inline'
           script: |
-            # Write your PowerShell commands here.
-            
-            Write-Host "Hello World"
+            Write-Host "Installing GitHub CLI..."
+            $installer = "ghsetup.exe"
+            Invoke-WebRequest -Uri "https://github.com/cli/cli/releases/download/v2.83.1/gh_2.83.1_windows_arm64.msi" -OutFile $installer
+            Start-Process msiexec.exe -ArgumentList "/i $installer /quiet /qn /norestart" -Wait
+            Write-Host "GitHub CLI Installed Successfully!"
+
+      - task: PowerShell@2
+        displayName: Config User for Git
+        inputs:
+          targetType: 'inline'
+          script: |
+            git config --global user.name "GitHub Sync Bot"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            gh auth login --with-token < $(GITHUB_PAT)
+        env:
+          GITHUB_PAT: $(GitHubPAT) 
+
+      - task: PowerShell@2
+        displayName: clone the repo
+        inputs:
+          targetType: 'inline'
+          script: |
+            $repoUrl = "$(GitHubRepoUrl)"  # Example: https://github.com/user/repo.git
+            $repoDir = "$(Build.SourcesDirectory)\githubrepo"
+            if (Test-Path $repoDir) {
+                Write-Host "Repo already exists. Pulling updates..."
+                cd $repoDir
+                git pull origin main
+            }
+            else {
+                Write-Host "Cloning fresh..."
+                git clone $repoUrl $repoDir
+            }
+      - task: PowerShell@2
+        displayName: Get the image version
+        inputs:
+          targetType: 'inline'
+          script: |
+            $tagFile = "$(Build.Artifactstagging)\tag.txt"
+            if (!(Test-Path $tagFile)) {
+                Write-Error "tag.txt not found!"
+                exit 1
+            }
+            $version = Get-Content $tagFile -Raw
+            Write-Host "Version from tag.txt: $version"
+            # Set pipeline variable
+            Write-Host "##vso[task.setvariable variable=ReleaseVersion]$version"
       
-      - task: update helm artifact with iamage versions
-      - task: push the changes to repo folder
+      - task: PowerShell@2
+        displayName: Update the Dev folder values.yml
+        inputs:
+          targetType: 'inline'
+          script: |
+            $repoDir = "$(Build.SourcesDirectory)\githubrepo"
+            $filePath = Join-Path $repoDir "helm/argocd/Dev/values.yaml"
+            if (!(Test-Path $filePath)) {
+                Write-Error "values.yaml not found at: $filePath"
+                exit 1
+            }
+            Write-Host "Updating tag in values.yaml to $(ReleaseVersion)"
+            (Get-Content $filePath) `
+                -replace 'tag:\s*.*', "tag: $(ReleaseVersion)" `
+                | Set-Content $filePath
+
+      - task: PowerShell@2
+        displayName: git pull commit and push
+        inputs:
+          targetType: 'inline'
+          script: |
+            $repoDir = "$(Build.SourcesDirectory)\githubrepo"
+            cd $repoDir
+            $branchName = "update-tag-$(ReleaseVersion)-$(Get-Date -Format yyyyMMddHHmmss)"
+            Write-Host "Creating branch: $branchName"
+            git checkout -b $branchName
+            git add helm/argocd/Dev/values.yaml
+            git commit -m "Update tag to $(ReleaseVersion)"
+            git push -u origin $branchName
+        env:
+          GITHUB_PAT: $(GitHubPAT)
+        
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            $repoDir = "$(Build.SourcesDirectory)\githubrepo"
+            cd $repoDir
+            $branchName = git branch --show-current
+            gh pr create `
+              --title "Update tag to $(ReleaseVersion)" `
+              --body "Automated update of tag value to $(ReleaseVersion)" `
+              --base main `
+              --head $branchName
