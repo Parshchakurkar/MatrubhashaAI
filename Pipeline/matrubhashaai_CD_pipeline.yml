@@ -56,10 +56,7 @@ stages:
           script: |
             $repoUrl = "$(GitHubRepoUrl)"
             git remote set-url origin $repoUrl
-            cd $env:Build_SourcesDirectory
-            mkdir githubrepo
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
-            ls "$(Build.SourcesDirectory)\githubrepo"
             if (Test-Path $repoDir) {
                 Write-Host "Repo already exists. Pulling updates..."
                 cd $repoDir
