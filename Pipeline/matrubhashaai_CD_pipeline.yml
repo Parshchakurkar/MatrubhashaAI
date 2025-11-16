@@ -10,6 +10,10 @@ resources:
       source: MatrubhashaAI_Build
       branch: main
 
+variables:
+  - group: CD pipeline variables
+
+
 stages:
 - stage: Dev
   jobs:
