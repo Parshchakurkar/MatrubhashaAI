@@ -69,7 +69,6 @@ stages:
             $repoUrl = "https://$env:GITHUB_PAT@github.com/Parshchakurkar/MatrubhashaAI.git"
             git remote set-url origin $repoUrl
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
-            ls "$(Build.SourcesDirectory)\githubrepo"
             if (Test-Path $repoDir) {
                 Write-Host "Repo already exists. Pulling updates..."
                 git pull origin main
