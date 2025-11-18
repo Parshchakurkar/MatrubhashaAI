@@ -89,17 +89,13 @@ stages:
           targetType: 'inline'
           script: |
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
-            $filePath = Join-Path $repoDir "MatrubhashaAI/helm/argocd/Dev/values.yaml
-            cd $repoDir
-            ls
+            $filePath = Join-Path $repoDir "/MatrubhashaAI/helm/argocd/Dev/values.yaml"
             if (!(Test-Path $filePath)) {
                 Write-Error "values.yaml not found at: $filePath"
                 exit 1
             }
-            Write-Host "Updating tag in values.yaml to $(ReleaseVersion)"
-            (Get-Content $filePath) `
-                -replace 'tag:\s*.*', "tag: $(ReleaseVersion)" `
-                | Set-Content $filePath
+            Write-Host "Updating tag in values.yaml to $(ReleaseVersion) "
+            (Get-Content $filePath) -replace 'tag:\s*.*', "tag: $(ReleaseVersion)" |  Set-Content $filePath
 
       - task: PowerShell@2
         displayName: git pull commit and push
