@@ -89,6 +89,8 @@ stages:
           targetType: 'inline'
           script: |
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
+            cd $repoDir
+            ls
             $filePath = Join-Path $repoDir "/MatrubhashaAI/helm/argocd/Dev/values.yaml"
             if (!(Test-Path $filePath)) {
                 Write-Error "values.yaml not found at: $filePath"
