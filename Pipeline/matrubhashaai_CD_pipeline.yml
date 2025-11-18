@@ -65,6 +65,8 @@ stages:
             else {
                 Write-Host "Cloning fresh..."
                 git clone $repoUrl $repoDir
+                cd $repoDir
+                ls
             }
       - task: PowerShell@2
         displayName: Get the image version
@@ -87,7 +89,7 @@ stages:
           targetType: 'inline'
           script: |
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
-            $filePath = Join-Path $repoDir "helm/argocd/Dev/values.yaml"
+            $filePath = Join-Path $repoDir "MatrubhashaAI/helm/argocd/Dev/values.yaml"
             if (!(Test-Path $filePath)) {
                 Write-Error "values.yaml not found at: $filePath"
                 exit 1
