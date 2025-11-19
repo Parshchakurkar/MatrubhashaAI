@@ -173,7 +173,7 @@ jobs:
           script: |
             $tag = $env:Build_BuildId
             Set-Content -Path "tag.txt" -Value $env:Build_BuildId -Encoding UTF8
-          workingDirectory: $env:Build_SourcesDirectory
+          workingDirectory: '$(Build.SourcesDirectory)'
         
       - task: PublishPipelineArtifact@1
         displayName: Publish Tag File
