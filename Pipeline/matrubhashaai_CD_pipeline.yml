@@ -59,7 +59,6 @@ stages:
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
             if (Test-Path $repoDir) {
                 Write-Host "Repo already exists. Pulling updates..."
-                cd $repoDir
                 git pull origin main
             }
             else {
@@ -110,6 +109,7 @@ stages:
             Write-Host "Creating branch: $branchName"
             git checkout -b $branchName
             git add helm/argocd/Dev/values.yaml
+            write-host "done adding"
             git commit -m "Update tag to $(ReleaseVersion)"
             git push -u origin $branchName
         env:
