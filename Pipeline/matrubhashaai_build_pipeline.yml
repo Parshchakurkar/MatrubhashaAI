@@ -163,7 +163,7 @@ jobs:
   
   - job: GetImagetImageTag
     displayName: Get Image Docker image tag
-    dependsOn: BuildandpushImage
+    #dependsOn: BuildandpushImage
     steps:
       - checkout: none
       - task: PowerShell@2
@@ -172,7 +172,7 @@ jobs:
           targetType: 'inline'
           script: |
             $tag = $env:Build_BuildId
-            $envValue | Out-File -FilePath tag.txt -Encoding UTF8
+            Set-Content -Path "tag.txt" -Value $env:Build_BuildId -Encoding UTF8
           workingDirectory: '$(Build.SourcesDirectory)'
         
       - task: PublishPipelineArtifact@1
