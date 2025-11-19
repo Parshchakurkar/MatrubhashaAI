@@ -77,10 +77,12 @@ stages:
                 Write-Error "tag.txt not found!"
                 exit 1
             }
+            cd "$env:Pipeline_Workspace\MatrubhashaAI_Build"
+            ls
             $version = Get-Content $tagFile -Raw
             Write-Host "Version from tag.txt: $version"
             # Set pipeline variable
-            Write-Host "##vso[task.setvariable variable=ReleaseVersion]$version"
+            Write-Host "##vso[task.setvariable variable=ReleaseVersion;isOutput=true]$version"
       
       - task: PowerShell@2
         displayName: Update the Dev folder values.yml
