@@ -163,7 +163,7 @@ jobs:
   
   - job: GetImagetImageTag
     displayName: Get Image Docker image tag
-    #dependsOn: BuildandpushImage
+    dependsOn: BuildandpushImage
     steps:
       - checkout: none
       - task: PowerShell@2
