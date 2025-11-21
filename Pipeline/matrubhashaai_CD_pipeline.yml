@@ -49,6 +49,9 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
+            git config --system --unset credential.helper
+            git config --global --unset credential.helper
+            git config --global credential.helper store
             git config --global user.name "GitHub Sync Bot"
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
             $env:GH_TOKEN = $env:GITHUB_PAT
@@ -114,13 +117,12 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
+            git config --global user.name "GitHub Sync Bot"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
-            cd $repoDir
             $branchName = "update-tag-$(ReleaseVersion)-$(Get-Date -Format yyyyMMddHHmmss)"
-            Write-Host "Creating branch: $branchName"
             git checkout -b $branchName
             git add helm/argocd/Dev/values.yaml
-            write-host "done adding"
             git commit -m "Update tag to $(ReleaseVersion)"
             git push  origin $branchName
         env:
