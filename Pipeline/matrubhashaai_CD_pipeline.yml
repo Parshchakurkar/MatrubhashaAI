@@ -54,7 +54,7 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
-            git remote set-url origin https://$(GITHUB_PAT)@github.com/$(user)/$(repo).git
+            git remote set-url origin https://$env:GITHUB_PAT@github.com/$(user)/$(repo).git
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
             if (Test-Path $repoDir) {
                 Write-Host "Repo already exists. Pulling updates..."
