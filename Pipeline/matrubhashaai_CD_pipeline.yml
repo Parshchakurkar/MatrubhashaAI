@@ -9,10 +9,15 @@ resources:
     - pipeline: MatrubhashaAI_Build
       source: MatrubhashaAI_Build
       branch: main
+  
+  repositories:
+    - repository: githubRepo
+      type: github
+      name: Parshchakurkar/MatrubhashaAI
+      endpoint: Parshchakurkar
 
 variables:
   - group: CD pipeline variables
-
 
 stages:
 - stage: Dev
@@ -23,6 +28,25 @@ stages:
       - download: MatrubhashaAI_Build
         artifact: tag
         displayName: Download the tag.txt
+      - checkout: githubRepo
+        persistCredentials: true
+      
+      - task: PowerShell@2
+        displayName: Get the image version
+        inputs:
+          targetType: 'inline'
+          script: |
+            $tagFile = "$env:Pipeline_Workspace\MatrubhashaAI_Build\tag\tag.txt"
+            if (!(Test-Path $tagFile)) {
+                Write-Error "tag.txt not found!"
+                exit 1
+            }
+            cd "$env:Pipeline_Workspace\MatrubhashaAI_Build"
+            ls
+            $version = Get-Content $tagFile -Raw
+            Write-Host "Version from tag.txt: $version"
+            # Set pipeline variable
+            Write-Host "##vso[task.setvariable variable=ReleaseVersion]$version"
       
       - task: PowerShell@2
         displayName: Install Github CLI
@@ -42,19 +66,7 @@ stages:
           script: |
             git config --global user.name "GitHub Sync Bot"
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
-            $env:GH_TOKEN = $env:GITHUB_PAT
-            $token = $env:GH_TOKEN
-            $token | gh auth login --with-token 
-            gh auth status
-        env:
-          GITHUB_PAT: $(GitHubPAT) 
-
-      - task: PowerShell@2
-        displayName: clone the repo
-        inputs:
-          targetType: 'inline'
-          script: |
-            $repoUrl = "$(GitHubRepoUrl)"
+            $repoUrl = "https://$env:GITHUB_PAT@github.com/Parshchakurkar/MatrubhashaAI.git"
             git remote set-url origin $repoUrl
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
             if (Test-Path $repoDir) {
@@ -64,34 +76,11 @@ stages:
             else {
                 Write-Host "Cloning fresh..."
                 git clone $repoUrl $repoDir
-                cd $repoDir
-                ls
             }
-      - task: PowerShell@2
-        displayName: Get the image version
-        inputs:
-          targetType: 'inline'
-          script: |
-            $tagFile = "$env:Pipeline_Workspace\MatrubhashaAI_Build\tag\tag.txt"
-            if (!(Test-Path $tagFile)) {
-                Write-Error "tag.txt not found!"
-                exit 1
-            }
-            cd "$env:Pipeline_Workspace\MatrubhashaAI_Build"
-            ls
-            $version = Get-Content $tagFile -Raw
-            Write-Host "Version from tag.txt: $version"
-            # Set pipeline variable
-            Write-Host "##vso[task.setvariable variable=ReleaseVersion;isOutput=true]$version"
-      
-      - task: PowerShell@2
-        displayName: Update the Dev folder values.yml
-        inputs:
-          targetType: 'inline'
-          script: |
-            $repoDir = "$env:Build_SourcesDirectory\githubrepo"
-            cd $repoDir\helm\argocd\dev
-            ls
+            cd $repoDir
+            $branchName = "update-tag-$(Get-Date -Format yyyyMMddHHmmss)"
+            git checkout -b $branchName
+            git branch
             $filePath = Join-Path $repoDir "\helm\argocd\Dev\values.yaml"
             if (!(Test-Path $filePath)) {
                 Write-Error "values.yaml not found at: $filePath"
@@ -99,34 +88,24 @@ stages:
             }
             Write-Host "Updating tag in values.yaml to $(ReleaseVersion) "
             (Get-Content $filePath) -replace 'tag:\s*.*', "tag: $(ReleaseVersion)" |  Set-Content $filePath
-
-      - task: PowerShell@2
-        displayName: git pull commit and push
-        inputs:
-          targetType: 'inline'
-          script: |
-            $repoDir = "$env:Build_SourcesDirectory\githubrepo"
-            cd $repoDir
-            $branchName = "update-tag-$(ReleaseVersion)-$(Get-Date -Format yyyyMMddHHmmss)"
-            Write-Host "Creating branch: $branchName"
-            git checkout -b $branchName
-            git add helm/argocd/Dev/values.yaml
-            write-host "done adding"
+            git add .
             git commit -m "Update tag to $(ReleaseVersion)"
-            git push -u origin $branchName
+            git push --set-upstream origin $branchName
+            Write-Host "##vso[task.setvariable variable=devbranchName]$branchName"
         env:
-          GITHUB_PAT: $(GitHubPAT)
+          GITHUB_PAT: $(GitHubPAT) 
         
       - task: PowerShell@2
         displayName: Raise PR
         inputs:
           targetType: 'inline'
           script: |
+            git config --global user.name "GitHub Sync Bot"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            $env:GH_TOKEN = $env:GITHUB_PAT
+            $token = $env:GH_TOKEN
+            $token | gh auth login --with-token 
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
-            cd $repoDir
-            $branchName = git branch --show-current
-            gh pr create `
-              --title "Update tag to $(ReleaseVersion)" `
-              --body "Automated update of tag value to $(ReleaseVersion)" `
-              --base main `
-              --head $branchName
+            gh pr create --title "Update tag to $(ReleaseVersion)" --body "Automated update of tag value to $(ReleaseVersion)" --base main --head $(devbranchName)
+        env:
+          GITHUB_PAT: $(GitHubPAT)
