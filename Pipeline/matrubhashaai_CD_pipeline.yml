@@ -82,7 +82,7 @@ stages:
             $version = Get-Content $tagFile -Raw
             Write-Host "Version from tag.txt: $version"
             # Set pipeline variable
-            Write-Host "##vso[task.setvariable variable=ReleaseVersion;isOutput=true]$version"
+            Write-Host "##vso[task.setvariable variable=ReleaseVersion]$version"
       
       - task: PowerShell@2
         displayName: Update the Dev folder values.yml
