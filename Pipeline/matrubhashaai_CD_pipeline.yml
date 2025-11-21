@@ -135,6 +135,9 @@ stages:
           script: |
             git config --global user.name "GitHub Sync Bot"
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            $env:GH_TOKEN = $env:GITHUB_PAT
+            $token = $env:GH_TOKEN
+            $token | gh auth login --with-token 
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
             $branchName = git branch --show-current
             gh pr create `
