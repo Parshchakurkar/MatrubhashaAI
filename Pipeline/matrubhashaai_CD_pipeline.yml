@@ -55,7 +55,7 @@ stages:
           targetType: 'inline'
           script: |
             $repoUrl = "$(GitHubRepoUrl)"
-            git remote set-url origin $repoUrl
+            git remote set-url origin https://$(GITHUB_PAT)@github.com/$(user)/$(repo).git
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
             if (Test-Path $repoDir) {
                 Write-Host "Repo already exists. Pulling updates..."
@@ -67,6 +67,8 @@ stages:
                 cd $repoDir
                 ls
             }
+        env:
+          GITHUB_PAT: $(GitHubPAT)
       - task: PowerShell@2
         displayName: Get the image version
         inputs:
@@ -113,7 +115,7 @@ stages:
             git add helm/argocd/Dev/values.yaml
             write-host "done adding"
             git commit -m "Update tag to $(ReleaseVersion)"
-            git push -u origin $branchName
+            git push origin $branchName
         env:
           GITHUB_PAT: $(GitHubPAT)
         
