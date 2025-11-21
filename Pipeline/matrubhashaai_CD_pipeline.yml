@@ -133,11 +133,14 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
+            git config --global user.name "GitHub Sync Bot"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
-            cd $repoDir
             $branchName = git branch --show-current
             gh pr create `
               --title "Update tag to $(ReleaseVersion)" `
               --body "Automated update of tag value to $(ReleaseVersion)" `
               --base main `
               --head $branchName
+        env:
+          GITHUB_PAT: $(GitHubPAT)
