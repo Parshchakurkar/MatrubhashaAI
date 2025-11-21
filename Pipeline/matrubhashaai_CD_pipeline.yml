@@ -77,8 +77,10 @@ stages:
                 Write-Host "Cloning fresh..."
                 git clone $repoUrl $repoDir
                 cd $repoDir
-                ls
+                $branchName = "update-tag-$(ReleaseVersion)-$(Get-Date -Format yyyyMMddHHmmss)"
+                git checkout -b $branchName
             }
+
       - task: PowerShell@2
         displayName: Get the image version
         inputs:
@@ -113,15 +115,14 @@ stages:
             (Get-Content $filePath) -replace 'tag:\s*.*', "tag: $(ReleaseVersion)" |  Set-Content $filePath
 
       - task: PowerShell@2
-        displayName: git pull commit and push
+        displayName: git commit and push
         inputs:
           targetType: 'inline'
           script: |
             git config --global user.name "GitHub Sync Bot"
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
-            $branchName = "update-tag-$(ReleaseVersion)-$(Get-Date -Format yyyyMMddHHmmss)"
-            git checkout -b $branchName
+            cd $repoDir
             git add helm/argocd/Dev/values.yaml
             git commit -m "Update tag to $(ReleaseVersion)"
             git push  origin $branchName
