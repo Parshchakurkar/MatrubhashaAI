@@ -89,6 +89,7 @@ stages:
             git add .
             git commit -m "Update tag to $(ReleaseVersion)"
             git push --set-upstream origin $branchName
+            Write-Host "##vso[task.setvariable variable=devbranchName]$branchName"
         env:
           GITHUB_PAT: $(GitHubPAT) 
         
@@ -103,7 +104,6 @@ stages:
             $token = $env:GH_TOKEN
             $token | gh auth login --with-token 
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
-            $branchName = git branch --show-current
-            gh pr create --title "Update tag to $(ReleaseVersion)" --body "Automated update of tag value to $(ReleaseVersion)" --base main --head $branchName
+            gh pr create --title "Update tag to $(ReleaseVersion)" --body "Automated update of tag value to $(ReleaseVersion)" --base main --head $(devbranchName)
         env:
           GITHUB_PAT: $(GitHubPAT)
