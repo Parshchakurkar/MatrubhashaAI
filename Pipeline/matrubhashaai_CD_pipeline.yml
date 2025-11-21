@@ -64,6 +64,8 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
+            git config --global user.name "GitHub Sync Bot"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
             $repoUrl = "https://$env:GITHUB_PAT@github.com/Parshchakurkar/MatrubhashaAI.git"
             git remote set-url origin $repoUrl
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
