@@ -19,8 +19,6 @@ resources:
 variables:
   - group: CD pipeline variables
 
-
-
 stages:
 - stage: Dev
   jobs:
@@ -77,7 +75,7 @@ stages:
                 Write-Host "Cloning fresh..."
                 git clone $repoUrl $repoDir
                 cd $repoDir
-                $branchName = "update-tag-$(ReleaseVersion)-$(Get-Date -Format yyyyMMddHHmmss)"
+                $branchName = "update-tag-$(Get-Date -Format yyyyMMddHHmmss)"
                 git checkout -b $branchName
             }
 
@@ -104,8 +102,6 @@ stages:
           targetType: 'inline'
           script: |
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
-            cd $repoDir\helm\argocd\dev
-            ls
             $filePath = Join-Path $repoDir "\helm\argocd\Dev\values.yaml"
             if (!(Test-Path $filePath)) {
                 Write-Error "values.yaml not found at: $filePath"
