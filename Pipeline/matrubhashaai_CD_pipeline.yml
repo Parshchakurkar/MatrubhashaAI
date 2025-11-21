@@ -9,9 +9,16 @@ resources:
     - pipeline: MatrubhashaAI_Build
       source: MatrubhashaAI_Build
       branch: main
+  
+  repositories:
+    - repository: githubRepo
+      type: github
+      name: Parshchakurkar/MatrubhashaAI
+      endpoint: Parshchakurkar
 
 variables:
   - group: CD pipeline variables
+
 
 
 stages:
@@ -23,6 +30,8 @@ stages:
       - download: MatrubhashaAI_Build
         artifact: tag
         displayName: Download the tag.txt
+      - checkout: githubRepo
+        persistCredentials: true
       
       - task: PowerShell@2
         displayName: Install Github CLI
@@ -54,7 +63,8 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
-            git remote set-url origin https://$env:GITHUB_PAT@github.com/$(user)/$(repo).git
+            $repoUrl = "$(GitHubRepoUrl)"
+            git remote set-url origin $repoUrl
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
             if (Test-Path $repoDir) {
                 Write-Host "Repo already exists. Pulling updates..."
@@ -66,8 +76,6 @@ stages:
                 cd $repoDir
                 ls
             }
-        env:
-          GITHUB_PAT: $(GitHubPAT)
       - task: PowerShell@2
         displayName: Get the image version
         inputs:
@@ -114,7 +122,7 @@ stages:
             git add helm/argocd/Dev/values.yaml
             write-host "done adding"
             git commit -m "Update tag to $(ReleaseVersion)"
-            git push origin $branchName
+            git push  origin $branchName
         env:
           GITHUB_PAT: $(GitHubPAT)
         
