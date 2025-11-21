@@ -74,7 +74,7 @@ stages:
             $token = $env:GH_TOKEN
             $token | gh auth login --with-token 
             gh auth status
-            $repoUrl = "$(GitHubRepoUrl)"
+            $repoUrl = "https://$env:GITHUB_PAT@github.com/Parshchakurkar/MatrubhashaAI.git"
             git remote set-url origin $repoUrl
             $repoDir = "$env:Build_SourcesDirectory\githubrepo"
             if (Test-Path $repoDir) {
@@ -98,7 +98,7 @@ stages:
             (Get-Content $filePath) -replace 'tag:\s*.*', "tag: $(ReleaseVersion)" |  Set-Content $filePath
             git add .
             git commit -m "Update tag to $(ReleaseVersion)"
-            git push origin $branchName
+            git push --set-upstream origin $branchName
         env:
           GITHUB_PAT: $(GitHubPAT) 
 
