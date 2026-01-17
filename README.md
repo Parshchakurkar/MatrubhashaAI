@@ -92,7 +92,17 @@ It is created inside the source location.
 - Once done create app. Provide app name and details with repo path and head to version of the file, and create.
 
 
-## todo
-- Expose ArgoCD, Prometheus, and Grafana via Ingress.
-- Automate monitoring dashboard provisioning.
-- Add CI tests for Helm chart validation.
+# AGIC (Azure gateway ingress controller)
+## Prerequisites
+- AKS cluster and Application Gateway must be in the same VNet (or peered VNet) and AGW must have its own subnet.
+- Create a user-assigned managed identity (or a service principal) that AGIC will use.
+- Grant that identity permission to the Application Gateway (e.g., Contributor or at least Network Contributor on the AGW resource or AGW resource group).
+- Your Kubernetes Service targeted by the Ingress should be ClusterIP (AGIC routes directly to pods/services).
+## Create identity & role assignment (example)
+
+- Create identity:
+`az identity create -g <appgw-resource-group> -n agic-identity`
+- Note the clientId and id (resourceId) from the output.
+- Assign role on the Application Gateway resource (replace placeholders):
+`az role assignment create --assignee <CLIENT_ID> --role "Contributor" --scope /subscriptions/<SUB>/resourceGroups/<AGW_RG>/providers/Microsoft.Network/applicationGateways/<APPGW_NAME>`
+## Install AGIC via Helm (example)
