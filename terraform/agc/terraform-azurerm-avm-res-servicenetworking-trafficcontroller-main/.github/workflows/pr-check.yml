@@ -1,0 +1,16 @@
+---
+name: PR Check
+on:
+  pull_request:
+    types: ['opened', 'reopened', 'synchronize']
+  merge_group:
+  workflow_dispatch:
+
+jobs:
+  run-managed-workflow:
+    uses: Azure/azure-verified-modules-tools/.github/workflows/terraform-module.yml@main
+    name: run managed workflow
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
