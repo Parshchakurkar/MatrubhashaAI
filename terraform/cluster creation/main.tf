@@ -13,7 +13,7 @@ resource "azurerm_subnet" "matrubhasha_subnet" {
   name                 = "matrubhasha-subnet"
   resource_group_name  = data.azurerm_resource_group.matrubhashaai_rg.name
   virtual_network_name = azurerm_virtual_network.matrubhashaai_vnet.name
-  address_prefixes     = ["10.0.1.0/24"]
+  address_prefixes     = ["10.0.1.0/26"]
 }
 
 resource "azurerm_kubernetes_cluster" "matrubhashaai_cluster" {
@@ -39,6 +39,9 @@ resource "azurerm_kubernetes_cluster" "matrubhashaai_cluster" {
     service_cidr = "172.16.0.0/16"
     dns_service_ip = "172.16.0.10"
     network_policy = "azure"
+  }
+  node_provisioning_profile {
+    mode = "Auto"
   }
 
 }
