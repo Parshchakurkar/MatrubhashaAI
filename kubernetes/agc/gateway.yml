@@ -1,0 +1,44 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: tomcat-gateway
+  namespace: tomcat-app
+  annotations:
+    # Name and namespace of the ALB resource (Application Gateway for Containers)
+    alb.networking.azure.io/alb-id: /subscriptions/9671d8e0-a851-481b-9c6f-24a31439312b/resourceGroups/matrubhashaai-rg/providers/Microsoft.ServiceNetworking/trafficControllers/agc-for-aks
+
+spec:
+  gatewayClassName: azure-alb-external
+  addresses:
+  - type: alb.networking.azure.io/alb-frontend
+    value: frontend-web
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      hostname: tomcat.example.com
+      allowedRoutes:
+        namespaces:
+          from: Same
+  # Optional: pin to a specific AGC frontend (Bring-your-own deployment).
+  # addresses:
+  #   - type: alb.networking.azure.io/alb-frontend
+  #     value: <frontend-name>
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: tomcat-route
+  namespace: tomcat-app
+spec:
+  parentRefs:
+    - name: tomcat-gateway
+      sectionName: http
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /tomcat
+      backendRefs:
+        - name: tomcat
+          port: 80
